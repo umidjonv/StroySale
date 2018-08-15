@@ -11,6 +11,7 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'layout'=>'stroy',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
@@ -35,6 +36,7 @@ return [
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
+            'maxSourceLines' => 20,
         ],
         
         'urlManager' => [

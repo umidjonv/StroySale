@@ -18,7 +18,7 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
-    public $layout = "login";
+    
     /**
      * {@inheritdoc}
      */
@@ -73,6 +73,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        //$this->redirect("site/login");
         return $this->render('index');
     }
 
@@ -83,6 +84,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        $this->layout = '@app/views/layouts/login.php';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }

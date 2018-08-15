@@ -33,42 +33,7 @@ AppAsset::register($this);
             <div class="row main">
             <div class="col-4"></div>
                 
-                <div class="col">
-                    <div class="row">
-                          <div class="col-3"></div>
-                          <div class="col">
-                          <img class="card-img-top" src="./images/login_key.png" alt="Card image cap" style="width: 150px;height: 150px;">
-                          </div>
-                          <div class="col-3"></div>
-                          </div>
-                    <div class="card" style="align-content: center; text-align: center;">
-                      
-                      <div class="card-body">
-                        <h5 class="card-title">ВХОД</h5>
-                        <p class="card-text">
-                            <form class="">
-                              <div class="form-group">
-                                
-                                <div class="col-sm-12">
-                                  <input type="text"  class="form-control" id="loginInput" placeholder="введите ваш логин">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                
-                                <div class="col-sm-12">
-                                  <input type="text" class="form-control" id="inputAdress" placeholder="введите пароль">
-                                </div>
-
-
-                              </div>
-                            </form>
-                        <a href="#" class="btn btn-primary">ВОЙТИ</a>
-                      </div>
-                    </div>
-                    
-
-
-                </div>
+                <?= $content ?>
                 <div class="col-4"></div>
             </div>
         </div>
