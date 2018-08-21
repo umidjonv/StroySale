@@ -43,6 +43,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                //'provider/deleteid/<id:\d+>' => 'provider/deleteid/<id:\d+>',
             ],
         ],
         
