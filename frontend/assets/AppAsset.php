@@ -17,12 +17,16 @@ class AppAsset extends AssetBundle
         'font/css/open-iconic-bootstrap.css',
         'css/jquery-ui.min.css',
         'css/jquery-ui.theme.min.css',
-        'css/custom.css'
+        'DataTables/datatables.css',
+        'css/custom.css',
+        
     ];
     public $js = [
         'js/jquery.min.js',
         'js/jquery-ui.min.js',
-        'js/custom.js'
+        'DataTables/datatables.js',
+        'js/custom.js',
+        
     ];
     public $depends = [
         'yii\web\YiiAsset',
