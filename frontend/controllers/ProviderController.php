@@ -28,6 +28,13 @@ class ProviderController extends Controller
         $this->enableCsrfValidation = false; 
         return parent::beforeAction($action); 
     }
+    
+    public function actionCurrent()
+    {
+        //\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;               
+        return "provider";        
+    }
+    
     public function actionSave()
     {
         $isAjax = false;

@@ -41,7 +41,7 @@ AppAsset::register($this);
             <h3 class="alert">Stroy Sale</h3>
             <ul class="nav flex-column">
                 <li class="nav-item"><a href="/provider" class="nav-link active">Поставщики</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Приход товаров</a></li>
+                <li class="nav-item"><a href="/invoice" class="nav-link">Приход товаров</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Баланс</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Provider4</a></li>
             </ul>

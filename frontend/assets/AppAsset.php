@@ -25,6 +25,7 @@ class AppAsset extends AssetBundle
         'js/jquery.min.js',
         'js/jquery-ui.min.js',
         'DataTables/datatables.js',
+        'js/bootstrap.js',
         'js/custom.js',
         
     ];

@@ -2,8 +2,33 @@
 <?php
 $js = <<<JS
 
-        
-    
+    $("#mainTable").Custom({
+    Columns:[
+            {"data":'providerId'},
+            {"data":'name'},
+            {"data":'address'},
+            {
+                "mDataProp": function (source, type, val) {
+                    if (type === 'set') {
+
+                        return;
+                    }
+                    else if (type === 'display') {
+                        return '<a href="#" class="btn btn-default" name="deleteRecord" id="delRecord' + source.providerId + '"><span class="oi oi-x"></span></a>';
+                    }
+
+                },
+                "sDefaultContent": '<a href="#" class="btn btn-default" name="deleteRecord"><span class="oi oi-x"></span></a>'
+            },
+
+        ],
+    tableId:"#providerTable",
+    refreshUrl:"/provider/refreshd",
+    deleteUrl:"/provider/delete",
+    saveUrl:"/provider/save",
+    newUrl:"/provider/new"
+
+});
        
     
         

@@ -1,30 +1,69 @@
 var tabpertable;
-$(function(){
-    
 
-    
-        
-    
-    tabpertable =  $('#mainTable').DataTable({
-        columns:[
-            {"data":'providerId'},
-            {"data":'name'},
-            {"data":'address'},
-            {
-                "mDataProp":function ( source, type, val ) {
-            if (type === 'set') {
+$.fn.Custom = function ( opts ) {
+    var maintable = $(this);
+    tabpertable = maintable.DataTable({
+        columns: opts.Columns,
 
-              return;
+        language: {
+            decimal: "",
+            emptyTable: "Нет данных в таблицы",
+            info: "Показать _START_ до _END_ из _TOTAL_ записей",
+            infoEmpty: "Показать от 0 до 0 из 0 записей",
+            infoFiltered: "(фильтровать по _MAX_)",
+            infoPostFix: "",
+            thousands: ",",
+            lengthMenu: "Показать _MENU_ ",
+            loadingRecords: "Загрузка...",
+            processing: "Процесс...",
+            search: "Поиск:",
+            zeroRecords: "Нет соответствующих данных",
+            paginate: {
+                first: "Первый",
+                last: "Конец",
+                next: "След.",
+                previous: "Пред."
+            },
+            aria: {
+                sortAscending: ": Задать по нарастающему",
+                sortDescending: ": Задать по убывающему"
             }
-            else if (type === 'display') {
-              return '<a href="#" class="btn btn-default" name="deleteRecord" id="delRecord'+source.providerId+'"><span class="oi oi-x"></span></a>';
-            }
+        },
+
+        ajax: {
+            url: opts.refreshUrl,
+            dataSrc: 'datas'
+        },
+        columnDefs:opts.columnDefs,
+
+        createdRow: function (row, data, dataIndex, cells) {
+            $(row).addClass('tableRow');
 
         },
-                "sDefaultContent": '<a href="#" class="btn btn-default" name="deleteRecord"><span class="oi oi-x"></span></a>'
-            },
+        initComplete: function (settings, json) {
 
-        ],
+
+        },
+        drawCallback: function (settings) {
+
+            $('[name="deleteRecord"]').on('click', function () {
+                $.DeleteRecord(this);
+
+            });
+            $("tr.tableRow").on("click", function () {
+                $.rowClick(this);
+            });
+
+        }
+
+
+    });
+     
+    
+     
+    /*
+    tabpertable =  $('#mainTable').DataTable({
+        columns:$.cols,
 
         language: {
             decimal: "",
@@ -51,7 +90,7 @@ $(function(){
             }
     },
 
-        ajax: { url:'/provider/refreshd',
+        ajax: { url:'/'+$.controller+'/refreshd',
         dataSrc:'datas'},
 
         createdRow: function ( row, data, dataIndex, cells ) {
@@ -66,7 +105,7 @@ $(function(){
         drawCallback:function( settings ) {
             
             $('[name="deleteRecord"]').on('click', function() {
-                $.DeleteRecord(this);
+                $.DeleteRecord(this, $.controller);
 
             });    
             $("tr.tableRow").on("click",function(){ 
@@ -76,7 +115,7 @@ $(function(){
         }
 
     
-    });
+    });*/
 
 var yesFunc = function () {$(this).dialog("close");};   
 var noFunc = function () {$(this).dialog("close");};
@@ -103,16 +142,16 @@ var noFunc = function () {$(this).dialog("close");};
     
     
     $.DeleteRecord = function(elem){
-        provId = $(elem).attr('id');
-        provId= provId.replace('delRecord', '');
+        eId = $(elem).attr('id');
+        eId= eId.replace('delRecord', '');
         yesFunc = function () {
                 $.ajax({
-                url: '/provider/delete',
+                url: opts.deleteUrl,
                 type: 'POST',
-                data:{'id':provId},
+                data:{'id':eId},
                 success: function(res){
                     var tableRow = $("td").filter(function() {
-                        return $(this).text() == provId;
+                        return $(this).text() == eId;
                     }).closest("tr");
                     $(tableRow).remove();
                     $('#mainTable').DataTable().ajax.reload();
@@ -140,24 +179,26 @@ var noFunc = function () {$(this).dialog("close");};
           var values = {};
           var i=0;
         $inputs.each(function() {
-
+            //alert($(this).attr('name')+''+tableData[i]);
             $(this).val(tableData[i]);
             i++;
         });
     };
     
     $.emptyValues = function(){
-        $('[name="providerId"]').val('0');
-        $('[name="name"]').val('');
-        $('[name="address"]').val('');
-    }
-    $('#btnNew').on('click', $.emptyValues());
+        
+         $("#mainForm1")[0].reset();
+        $("#formID").val(0);
+    };
+    $('#btnNew').on('click', function(){
+        $.emptyValues();
+    });
     $('#mainForm1').on('submit', function(){
         var formId = $('#formID').val();
-        var url1 = '/provider/save';
+        var url1 = opts.saveUrl;
         if(formId == 0)
         {
-            url1 = '/provider/new';
+            url1 = opts.newUrl;
         
         }
         
@@ -168,26 +209,7 @@ var noFunc = function () {$(this).dialog("close");};
             data: data,
             success: function(res){
             $('#mainTable').DataTable().ajax.reload();
-            //tabpertable.DataTable().draw();
-            /*if(formId == 0)
-            {
-                var str = '<tr class="tableRow"><td>'+res.providerId+'</td>'+
-                '<td>'+res.name+'</td>'+
-                '<td>'+res.address+'</td>'
-                    '<td><a href="#" class="btn btn-default" name="deleteRecord" id="delRecord'+res.providerId+'"><span class="oi oi-x"></span></a></td></tr>';
-
-                $('#mainTable >  tbody:last').append(str);
-            }else
-            {
-               var tableRow = $("td").filter(function() {
-                    return $(this).text() == formId;
-                }).closest("tr");
-                
-                $(tableRow).find('td:eq(1)').text(res.name);
-                $(tableRow).find('td:eq(2)').text(res.address);
-                
-            
-            }*/
+            $.emptyValues();
             
                                 
         
@@ -200,7 +222,6 @@ var noFunc = function () {$(this).dialog("close");};
         
         return false; 
     });    
-  
-  
+            
 
-});
+}
