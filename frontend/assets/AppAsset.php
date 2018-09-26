@@ -17,15 +17,20 @@ class AppAsset extends AssetBundle
         'font/css/open-iconic-bootstrap.css',
         'css/jquery-ui.min.css',
         'css/jquery-ui.theme.min.css',
+        'css/chosen.min.css',
         'DataTables/datatables.css',
+        
         'css/custom.css',
+        
         
     ];
     public $js = [
         'js/jquery.min.js',
         'js/jquery-ui.min.js',
         'DataTables/datatables.js',
+        'js/popper.js',
         'js/bootstrap.js',
+        'js/chosen.jquery.min.js',
         'js/custom.js',
         
     ];

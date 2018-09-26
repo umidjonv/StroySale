@@ -35,7 +35,7 @@ $js = <<<JS
                         return;
                     }
                     else if (type === 'display') {
-                        return '<a href="#" class="btn btn-info" name="invoiceEx" id="invoice' + source.invoiceId + '" data-toggle="modal" data-target="#mainModal">Список товаров</a>';
+                        return '<a href="#" class="btn btn-info" name="extendModal" id="invoice' + source.invoiceId + '" data-toggle="modal" data-target="#mainModal">Список товаров</a>';
                     }
 
                 },
@@ -91,7 +91,7 @@ $js = <<<JS
     newUrl:"/invoice/new"
 
 });
-  
+
         $.ajax({
                 url: '/provider/refreshd',
                 type: 'POST',
@@ -110,6 +110,58 @@ $js = <<<JS
                 }
             });
         
+        
+        $.customModal = function(elem){
+        
+            id = $(elem).attr('id').replace('invoice', ''); 
+            $.ajax({
+                url: '/invoice/invoiceexes',
+                type: 'POST',
+                data:{'id':id},
+                success: function(res){
+                    $('#modalTblBody').empty();
+                    tbl = "";
+                    $.each(res['datas'], function(index, value){
+                        tbl += "<tr><td>"+value.invoiceExId+"</td>";
+                        tbl += "<td>"+value.productName+"</td>";
+                        tbl += "<td>"+value.cnt+"</td>";
+                        tbl += '<td><a href="#" class="btn btn-default" name="deleteRecordInv" id="delRecord' + value.invoiceExId + '"><span class="oi oi-x"></span></a></td></tr>';
+                        
+                        
+                    });
+                    $('#modalTblBody').append(tbl);
+                    $('[name="deleteRecordInv"]').on('click', function(){
+                        
+                        $.DeleteRecordAll(this, '/invoiceex/delete', false);
+                    });
+                },
+                error: function(xhr){
+                    console.log(xhr.responseText);
+                }
+            });
+        };
+        function  refreshProdType() {
+            var val = 2;
+            var text = "";
+                $.ajax({
+                      url: "/calc/struct/refresh-prod-type",
+                      type: 'POST',
+                      data:{_csrf : yii.getCsrfToken(),val:val},
+                      dataType: 'json',
+                      success: function(res){
+                          text += "<select class='form-control' name='stuffProdId'>";
+                          $.each(res, function(index,val) {
+                                text += "<option value='"+index+"'>"+val+"</option>";
+                          });
+                          text += "</select";
+                          $("#product").html(text);
+                      },
+                      error: function(xhr){
+                          console.log(xhr.responseText);
+                      }
+                  });
+      };
+        
 JS;
  
 $this->registerJs($js);
@@ -120,28 +172,39 @@ $this->registerJs($js);
                           <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Список наименований</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
+                                <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
+                            
+                            
                           <div class="modal-body">
                               <div class="container-fluid">
-                              
+                                  <form class="form-inline">
+                                     <div class="form-group mb-2">
+                                        <label for="productLabel" class="sr-only">Продукты</label>
+                                        <select id="product" class="form-control">
+                                            
+                                        </select>
+                                        
+                                      </div>
+                                      <div class="form-group mx-sm-3 mb-2">
+                                        <label for="inputCnt" class="sr-only">Кол.</label>
+                                        <input type="text" class="form-control" id="inputCnt"/>
+                                      </div>
+                                  </form>
                                   <div class="row">
-                                    <div class="col-md-6">
-                                        <table id="modalTable">
+                                    <div class="col">
+                                        <table id="modalTable" class="table" name="">
                                             <thead>
-                                                <tr
-                                                    <th>ProductId</th>
-                                                    <th>Name</th>
-                                                    <th>Count</th>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col" style="width:250px;" name="m_prductId" id="productId">Name</th>
+                                                    <th scope="col">Count</th>
+                                                    
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
+                                            <tbody id="modalTblBody">
+                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -160,7 +223,7 @@ $this->registerJs($js);
         </div>
 <h3>Приход</h3>
 <div id="error"></div>            
-<?php// print_r($models->all()[0]->name) ?>
+
 <div class="row">
                 <div class="col">
                     <form class="mainForm" id="mainForm1" action="/invoice/save" method="POST">

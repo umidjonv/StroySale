@@ -7,6 +7,7 @@ $params = array_merge(
 );
 
 return [
+    'homeUrl'=>'/',
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
@@ -15,6 +16,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'baseUrl'=>''
         ],  
         'user' => [
             'identityClass' => 'common\models\User',
@@ -43,8 +45,17 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                //'provider/deleteid/<id:\d+>' => 'provider/deleteid/<id:\d+>',
+                //'sold/expense/step1/<param:\d+>' => 'sold/expense/step1',
+                'sold/orders/refreshd/<id:\d+>' => 'sold/orders/refreshd',
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+                
             ],
+        ],
+        'assetManager' => [
+            'class' => 'yii\web\AssetManager',
+            'forceCopy' => FALSE,          
         ],
         
     ],

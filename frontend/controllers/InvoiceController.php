@@ -150,11 +150,35 @@ class InvoiceController extends \yii\web\Controller
     }
     public function actionInvoiceexes()
     {
-        $id = Yii::$app->request->post()['id'];
+        try{
+        $id = 3;//Yii::$app->request->post()['id'];
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $invoceExes = \app\models\Invoice::findOne(['invoceId'=>$id])->invoiceExes;
-        $models = $invoiceExes->toArray();
-        return ['datas' => $models];
+        
+        
+        $invoiceExes = \app\models\Invoice::findOne(['invoiceId'=>$id])->invoiceExes;
+        $arr = ArrayHelper::toArray($invoiceExes, [
+                    \app\models\InvoiceEx::class => [
+                'invoiceExId',
+                'productId',
+                'cnt',
+                'invoiceId',
+                'productName'=> function ($data) {
+                    return $data->product->name;
+                },
+            ],
+        ]);
+            return ['datas' =>$arr];
+        //return ['datas'=>$invoceExes];
+        }
+        catch(yii\db\Exception $ex)
+        {
+            return $ex->getMessage();
+        }
+        
+        
+        //return $invoceExes->toArray();        
+//$models = $invoiceExes->toArray();
+        //return ['datas' => $models];
     }
     
 

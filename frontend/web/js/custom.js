@@ -7,7 +7,7 @@ $.fn.Custom = function ( opts ) {
 
         language: {
             decimal: "",
-            emptyTable: "Нет данных в таблицы",
+            emptyTable: "Нет данных в таблице",
             info: "Показать _START_ до _END_ из _TOTAL_ записей",
             infoEmpty: "Показать от 0 до 0 из 0 записей",
             infoFiltered: "(фильтровать по _MAX_)",
@@ -53,69 +53,24 @@ $.fn.Custom = function ( opts ) {
             $("tr.tableRow").on("click", function () {
                 $.rowClick(this);
             });
+            
+            $('[name="extendModal"]').on('click', function(){
+               if (typeof $.customModal === "function")
+                {
+                  $.customModal(this);
+                } 
+            });
 
         }
 
 
     });
      
-    
-     
-    /*
-    tabpertable =  $('#mainTable').DataTable({
-        columns:$.cols,
 
-        language: {
-            decimal: "",
-            emptyTable: "Нет данных в таблицы",
-            info: "Показать _START_ до _END_ из _TOTAL_ записей",
-            infoEmpty: "Показать от 0 до 0 из 0 записей",
-            infoFiltered: "(фильтровать по _MAX_)",
-            infoPostFix: "",
-            thousands: ",",
-            lengthMenu: "Показать _MENU_ ",
-            loadingRecords: "Загрузка...",
-            processing: "Процесс...",
-            search: "Поиск:",
-            zeroRecords: "Нет соответствующих данных",
-            paginate: {
-              first: "Первый",
-              last: "Конец",
-              next: "След.",
-              previous: "Пред."
-            },
-            aria: {
-              sortAscending: ": Задать по нарастающему",
-              sortDescending: ": Задать по убывающему"
-            }
-    },
 
-        ajax: { url:'/'+$.controller+'/refreshd',
-        dataSrc:'datas'},
 
-        createdRow: function ( row, data, dataIndex, cells ) {
-            $(row).addClass('tableRow');
 
-        },
-        initComplete:function(settings, json)
-        {
-            
 
-        },
-        drawCallback:function( settings ) {
-            
-            $('[name="deleteRecord"]').on('click', function() {
-                $.DeleteRecord(this, $.controller);
-
-            });    
-            $("tr.tableRow").on("click",function(){ 
-                $.rowClick(this);
-            });
-
-        }
-
-    
-    });*/
 
 var yesFunc = function () {$(this).dialog("close");};   
 var noFunc = function () {$(this).dialog("close");};
@@ -124,6 +79,7 @@ var noFunc = function () {$(this).dialog("close");};
     $('<div></div>').appendTo('body')
                     .html('<div><h6>'+message+'?</h6></div>')
                     .dialog({
+
                         modal: true, title: 'Сообщение', zIndex: 10000, autoOpen: true,
                         width: '250px', resizable: false,
                         buttons: {
@@ -142,6 +98,7 @@ var noFunc = function () {$(this).dialog("close");};
     
     
     $.DeleteRecord = function(elem){
+        
         eId = $(elem).attr('id');
         eId= eId.replace('delRecord', '');
         yesFunc = function () {
@@ -223,5 +180,39 @@ var noFunc = function () {$(this).dialog("close");};
         return false; 
     });    
             
-
+    $.DeleteRecordAll = function(elem, delurl, isConfirmDialog){
+        
+        eId = $(elem).attr('id');
+        eId= eId.replace('delRecord', '');
+        alert(eId);
+        yesFunc = function () {
+                $.ajax({
+                url: delurl,
+                type: 'POST',
+                data:{'id':eId},
+                success: function(res){
+                    var tableRow = $("td").filter(function() {
+                        return $(this).text() == eId;
+                    }).closest("tr");
+                    $(tableRow).remove();
+                    //$('#mainTable').DataTable().ajax.reload();
+                    console.log(res+ " record deleted");
+                    //$.emptyValues();
+                },
+                error: function(xhr){
+                    console.log(xhr.responseText);
+                }
+            });
+            if(isConfirmDialog)
+            $(this).dialog("close");
+        };  
+        if(isConfirmDialog)
+        $.ConfirmDialog('Удалить запись', yesFunc);
+        else
+            yesFunc();
+        
+    };
+    
+   
+            
 }
