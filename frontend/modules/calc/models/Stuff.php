@@ -34,6 +34,7 @@ class Stuff extends \yii\db\ActiveRecord
         return [
             [['measureId', 'salary', 'energy'], 'integer'],
             [['name'], 'string', 'max' => 100],
+            [['price'], 'number'],
             [['measureId'], 'exist', 'skipOnError' => true, 'targetClass' => Measure::className(), 'targetAttribute' => ['measureId' => 'measureId']],
         ];
     }
@@ -49,6 +50,7 @@ class Stuff extends \yii\db\ActiveRecord
             'measureId' => 'Measure ID',
             'salary' => 'Salary',
             'energy' => 'Energy',
+            'price' => 'price',
         ];
     }
 

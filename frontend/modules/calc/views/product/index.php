@@ -6,6 +6,7 @@ $("#mainTable").Custom({
     Columns:[
             {"data":'productId'},
             {"data":'name'},
+            {"data":'price'},
             {"data":'measureId'},
             {"data":'categoryId'},
             {"data":'measure'},
@@ -60,7 +61,7 @@ $product = new \app\modules\calc\models\Product();
 ?>
 <h3>Продукты</h3>
 <div id="error"></div>
-
+<?php// print_r($models->all()[0]->name) ?>
 <div class="row">
     <div class="col">
         <form class="mainForm" id="mainForm1" action="" method="POST">
@@ -74,6 +75,10 @@ $product = new \app\modules\calc\models\Product();
                 <label for="inputProductName" class="col-sm-2 col-form-label">Наименование</label>
                 <div class="col-sm-5">
                     <input type="text"  class="form-control" name="name" id="inputProductName" placeholder="введите наименование">
+                </div>
+                <label for="inputProductPrice" class="col-sm-1 col-form-label">Цена</label>
+                <div class="col-sm-3">
+                    <input type="number"  class="form-control" name="price" id="inputProductPrice" placeholder="введите цену">
                 </div>
             </div>
             <div class="form-group row">
@@ -110,6 +115,7 @@ $product = new \app\modules\calc\models\Product();
         <tr>
             <th scope="col">#</th>
             <th scope="col">Наиенование</th>
+            <th scope="col">Цена</th>
             <th scope="col">#</th>
             <th scope="col">Ед.Изм</th>
             <th scope="col">#</th>
@@ -124,6 +130,7 @@ $product = new \app\modules\calc\models\Product();
                 <tr class="tableRow">
                     <td scope="row"><?= $model->productId ?></td>
                     <td><?= $model->name ?></td>
+                    <td><?= $model->price ?></td>
                     <td><?= $model->measureId?></td>
                     <td><?= $model->category->name?></td>
                     <td><?= $model->categoryId?></td>

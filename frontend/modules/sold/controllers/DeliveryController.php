@@ -22,6 +22,11 @@ class DeliveryController extends Controller
         $this->render('delivery_v');
     }
 
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
     public function actionStep2()
     {
         $session = \Yii::$app->session;
@@ -38,6 +43,48 @@ class DeliveryController extends Controller
         }else
         {
             $this->redirect('/sold/expense');
+        }
+
+    }
+
+    public function actionSave()
+    {
+        try
+        {
+
+            //$this->enableCsrfValidation = false;
+
+            $session = \Yii::$app->session;
+            $model = new Delivery();
+
+        if((isset($session['expenseId'])&& isset($session['step'])) && ($session['step']==2&&($model->load(Yii::$app->request->post(), ''))) )
+        {
+
+
+            $expId = $session['expenseId'];
+
+            $model->expenseId = $expId;
+            $model->deliveryType = Yii::$app->request->post()['deliveryType'];
+            $model->name = Yii::$app->request->post()['name'];
+            $model->description = Yii::$app->request->post()['description'];
+            $model->price =  Yii::$app->request->post()['price'];
+            $model->address = Yii::$app->request->post()['address'];
+            if($model->validate())
+            {
+                $model->save();
+                return 'OK';
+            }else
+            {
+                return var_dump(Yii::$app->request->post()['deliveryType']);
+            }
+
+        }else
+        {
+            $this->redirect('/sold/expense');
+        }
+        }catch(\Exception $ex)
+        {
+            return $ex->getMessage();
         }
 
     }

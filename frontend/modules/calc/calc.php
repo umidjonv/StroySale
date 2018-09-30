@@ -18,7 +18,6 @@ class calc extends \yii\base\Module
      */
     public function init()
     {
-        //$this->layout = 'stroy';
         parent::init();
 
         // custom initialization code goes here

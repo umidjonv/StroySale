@@ -35,7 +35,7 @@ $.fn.Custom = function ( opts ) {
             dataSrc: 'datas'
         },
         columnDefs:opts.columnDefs,
-
+        order: opts.order,
         createdRow: function (row, data, dataIndex, cells) {
             $(row).addClass('tableRow');
 

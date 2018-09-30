@@ -35,6 +35,7 @@ class Product extends \yii\db\ActiveRecord
         return [
             [['measureId', 'categoryId'], 'integer'],
             [['name'], 'string', 'max' => 100],
+            [['price'], 'number'],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['categoryId' => 'categoryId']],
             [['measureId'], 'exist', 'skipOnError' => true, 'targetClass' => Measure::className(), 'targetAttribute' => ['measureId' => 'measureId']],
         ];
@@ -50,6 +51,7 @@ class Product extends \yii\db\ActiveRecord
             'name' => 'Name',
             'measureId' => 'Measure ID',
             'categoryId' => 'Category ID',
+            'price' => 'price',
         ];
     }
 

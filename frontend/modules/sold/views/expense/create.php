@@ -49,6 +49,7 @@ var expenseId = $('#formID').val().replace(' ', '');
             
             
         ],
+        
     tableId:"#ordersTable",
     refreshUrl:"/sold/orders/refreshd/"+expenseId,
     deleteUrl:"/sold/orders/delete",
@@ -86,6 +87,8 @@ var expenseId = $('#formID').val().replace(' ', '');
                 success: function(res){                                                         
                     $('#mainModal').modal('hide');   
                     $('#mainTable').DataTable().ajax.reload();
+                    $('#tempName').val('');
+                    $('#packCount').val('0');
                 },                                                                              
                 error: function(xhr){                                                           
                     console.log(xhr.responseText);                                              
@@ -160,26 +163,26 @@ $this->registerJs($js);
                                </div>
                                <div class="row">
                                    <div class="col">
-                                       <form id="modalForm">
+                                       <form id="modalForm" >
                                            <br>
                                            <input type="hidden" class="form-control" value="" id="stuffOrProdId" name="stuffProdId"/>
                                            <input type="hidden" class="form-control" value="" id="stuffOrProdType" name="idType"/>
                                            <div class="form-group row">
                                                <label for="staticId" class="col-sm-4 col-form-label">Наименование</label>
                                                <div class="col-sm-6">
-                                                   <input type="text" class="form-control" id="tempName" value=""/>
+                                                   <input type="text" class="form-control" id="tempName" value="" autocomplete="off"/>
                                                </div>
                                            </div>
 
                                            <div class="form-group row">
                                                <label for="staticId" class="col-sm-4 col-form-label">Количество</label>
                                                <div class="col-sm-6">
-                                                   <input type="text" class="form-control" value="0" name="packCount"/>
+                                                   <input type="text" class="form-control" value="0" name="packCount" id="packCount" autocomplete="off"/>
                                                </div>
                                            </div>
 
 
-                                           <button type="submit" class="btn btn-primary" id="saveModalForm" >Сохранить</button>
+                                           <a  href="#" class="btn btn-primary" id="saveModalForm" >Сохранить</a>
 
                                   </form>
                                    </div>
@@ -213,9 +216,9 @@ $this->registerJs($js);
                         <label for="staticPaidType" class="col-sm-2 col-form-label">Тип оплаты</label>
                         <div class="col-sm-6">
                             <select class="form-control" name="paidType">
-                                <option <?=$model->paidType==0?:"selected";"" ?> value="1">Наличные</option>
-                                <option <?=$model->paidType==1?:"selected";"" ?> value="0">Без наличный</option>
-                                <option <?=$model->paidType==2?:"selected";"" ?> value="2">Перечисление</option>
+                                <option <?=$model->paidType==0?"selected":"" ?> value="0">Наличные</option>
+                                <option <?=$model->paidType==1?"selected":"" ?> value="1">Без наличный</option>
+                                <option <?=$model->paidType==2?"selected":"" ?> value="2">Перечисление</option>
                             </select>
                         </div>
                       </div>
@@ -227,7 +230,7 @@ $this->registerJs($js);
                             </select>
                         </div>
                       </div>
-                        <div class="form-group row">
+                        <div class="form-gr-oup row">
                             <label for="staticId" class="col-sm-2 col-form-label">Комментарий</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="comment" value="<?=$model->comment ?>" placeholder="комментарий если есть"/>

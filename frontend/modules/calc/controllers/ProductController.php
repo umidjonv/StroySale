@@ -2,6 +2,7 @@
 
 namespace app\modules\calc\controllers;
 
+use app\modules\calc\models\Price;
 use app\modules\calc\models\Product;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -65,9 +66,13 @@ class ProductController extends Controller
 
                 $model->productId = Yii::$app->request->post()['productId'];
                 $model->name = Yii::$app->request->post()['name'];
+                $model->price = Yii::$app->request->post()['price'];
                 $model->measureId = Yii::$app->request->post()['measureId'];
                 $model->categoryId = Yii::$app->request->post()['categoryId'];
-                $model->save();
+                if($model->save()){
+                    $price = new Price();
+                    $price->setPrice($model->price,1,$model->productId);
+                }
                 $models = Product::find()->all();
                 // var_dump($model);
                 if($isAjax)
@@ -100,9 +105,13 @@ class ProductController extends Controller
         if ($form_model->load(Yii::$app->request->post(), '')) {
             $form_model->productId = Yii::$app->request->post()['productId'];
             $form_model->name = Yii::$app->request->post()['name'];
+            $form_model->price = Yii::$app->request->post()['price'];
             $form_model->measureId = Yii::$app->request->post()['measureId'];
             $form_model->categoryId = Yii::$app->request->post()['categoryId'];
-            $form_model->save();
+            if($form_model->save()){
+                $price = new Price();
+                $price->setPrice($form_model->price,1,$form_model->productId);
+            }
             $models = Product::find();
             if($isAjax)
             {
@@ -140,6 +149,7 @@ class ProductController extends Controller
             Product::class =>[
                 'productId',
                 'name',
+                'price',
                 'measureId',
                 'categoryId',
                 'measure'=>function($data){

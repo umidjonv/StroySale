@@ -5,13 +5,15 @@ $js = <<<JS
     Columns:[
             {"data":'expenseId'},
             {"data":'expenseDate'},
-            {"data":'comment',},
+            
             {"data":'clientId'},
-            {"data":'expType'},
-            {"data":'inCash'},
-            {"data":'terminal'},
-            {"data":'transfer'},
+            {"data":'clientName'},
+            {"data":'comment'},
+            {"data":'paidType'},
+            {"data":'paidTypeName'},
             {"data":'expSum'},
+            {"data":'deliveryPrice'},
+            {"data":'delivery'},
              
             {
                 "mDataProp": function (source, type, val) {
@@ -28,6 +30,22 @@ $js = <<<JS
             },
 
         ],
+        columnDefs: [
+            
+            {
+                "targets": [ 2 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 5 ],
+                "visible": false,
+                "searchable": false
+            },
+            
+            
+        ],
+        order:[[ 0, "desc" ]],
     tableId:"#expenseTable",
     refreshUrl:"/sold/expense/refreshd",
     deleteUrl:"/sold/expense/delete",
@@ -61,13 +79,16 @@ if($session->isActive)
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Дата реализации</th>
-                          <th scope="col">Примечание</th>
+
                           <th scope="col">КлиентИД</th>
-                          <th scope="col">Тип</th>
-                          <th scope="col">Наличные</th>
-                          <th scope="col">Терминал</th>
-                          <th scope="col">Перечисление</th>
+                            <th scope="col">Клиент</th>
+                            <th scope="col">Примечание</th>
+                            <th scope="col">Тип оплаты</th>
+                          <th scope="col">Оплата</th>
                           <th scope="col">Сумма</th>
+                            <th scope="col">Сумма доставки</th>
+                            <th scope="col">Описание</th>
+
                           <th></th>
                         </tr>
                       </thead>
@@ -83,9 +104,10 @@ if($session->isActive)
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                        
                       

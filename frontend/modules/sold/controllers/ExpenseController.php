@@ -202,7 +202,7 @@ class ExpenseController extends Controller
 
                 }else
                 {
-
+                    $this->redirect('/sold/expense');
                 }
 
             }
@@ -220,7 +220,7 @@ class ExpenseController extends Controller
     public function actionRefreshd()
     {
 
-        $models = Expense::find()->where(['expType'=>0])->orderBy(['expenseId'=>SORT_DESC])->all();
+        $models = Expense::find()->where(['expType'=>0])->orderBy(['expenseId'=>SORT_DESC])->limit(1000)->all();
         
         //return var_dump($models);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -231,13 +231,32 @@ class ExpenseController extends Controller
                 'expenseDate',
                 'comment',
                 'clientId',
-                'expType',
-                'inCash',
-                'terminal',
-                'transfer',
+                'paidType',
+                'paidTypeName'=>function($data){
+                    $str = 'Наличные';
+                    switch($data->paidType)
+                    {
+                        case 0:
+                            $str = 'Наличные';
+                            break;
+                        case 1:
+                            $str = 'Без нал';
+                            break;
+                        case 2:
+                            $str = 'Перечисление';
+                            break;
+                    }
+                    return $str;
+                },
                 'expSum',
                 'clientName'=>function($data){
-                    return $data->client->clientName;
+                    return (isset($data->client->clientName)?$data->client->clientName:'прямая продажа');
+                },
+                'deliveryPrice'=>function($data){
+                    return $data->delivery->price;
+                },
+                'delivery'=>function($data){
+                    return $data->delivery->address.' '.$data->delivery->name.' '.$data->delivery->description ;
                 },
                 //'category'=>function($data){
                 //    return $data->category->name;

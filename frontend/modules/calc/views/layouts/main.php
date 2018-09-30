@@ -44,8 +44,8 @@ AppAsset::register($this);
                     <li class="nav-item"><a href="/provider" class="nav-link active">Поставщики</a></li>
                     <li class="nav-item"><a href="/invoice" class="nav-link">Приход товаров</a></li>
                     <li class="nav-item"><a href="#" class="nav-link">Баланс</a></li>
-
-                    <li class="nav-item"><a href="/calc" class="nav-link">Продукция</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Provider4</a></li>
+                    <li class="nav-item"><a href="/calc" class="nav-link">Калькуляция</a></li>
                 </ul>
             </div>
         <?php else: ?>
@@ -75,7 +75,7 @@ AppAsset::register($this);
                             <a class="nav-link" href="/calc/category">Категории</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="/calc/stuff">Рецепты</a>
+                            <a class="nav-link " href="/calc/stuff">Продукция</a>
                         </li>
                     </ul>
                 </div>

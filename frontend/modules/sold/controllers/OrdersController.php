@@ -1,7 +1,8 @@
 <?php
 
 namespace app\modules\sold\controllers;
-
+use app\modules\calc\models\Product;
+use app\modules\calc\models\Stuff;
 use app\modules\sold\models\Orders;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -69,10 +70,28 @@ class OrdersController extends Controller
                 $model->packCount = Yii::$app->request->post()['packCount'];
                 $model->faktCount = $model->packCount;
                 $model->idType = Yii::$app->request->post()['idType'];
-                //$model->orderSumm = $model->packCount *  $model->product->price ;
-                $model->save();
+                if($model->idType)
+                {
+                    $mProduct = Product::find()->where(['productId'=>$model->stuffProdId])->one();
+                    $model->orderSumm = $model->packCount * $mProduct->price;
+                }
+                else
+                {
+                    $mProduct = Stuff::find()->where(['stuffId'=>$model->stuffProdId])->one();
+                    $model->orderSumm = $model->packCount * $mProduct->price;
+                }
 
-                return $this->actionRefreshd($model->expenseId);
+                //$model->orderSumm = $model->packCount *  ($model->idType==0?$model->product->price:$model->stuffProdId;
+                if($model->validate())
+                {
+                    $model->save();
+                    return $this->actionRefreshd($model->expenseId);
+                }else
+                {
+                    return var_dump($model->errorSummary());
+                }
+
+
 
             }
         }catch(\yii\db\Exception $ex)

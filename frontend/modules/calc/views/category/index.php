@@ -36,7 +36,7 @@ $this->registerJs($js);
 
 <h3>Категория</h3>
 <div id="error"></div>
-
+<?php// print_r($models->all()[0]->name) ?>
 <div class="row">
     <div class="col">
         <form class="mainForm" id="mainForm1" action="/category/save" method="POST">
