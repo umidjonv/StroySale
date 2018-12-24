@@ -89,6 +89,9 @@ var expenseId = $('#formID').val().replace(' ', '');
                     $('#mainTable').DataTable().ajax.reload();
                     $('#tempName').val('');
                     $('#packCount').val('0');
+                    $('#additionProd').prop("selectedIndex", 0);
+                    $('#additionCnt').val('0');
+                    
                 },                                                                              
                 error: function(xhr){                                                           
                     console.log(xhr.responseText);                                              
@@ -111,6 +114,7 @@ var expenseId = $('#formID').val().replace(' ', '');
             $('#stuffOrProdType').val(1);
    
         });
+     
      
 JS;
 
@@ -177,7 +181,23 @@ $this->registerJs($js);
                                            <div class="form-group row">
                                                <label for="staticId" class="col-sm-4 col-form-label">Количество</label>
                                                <div class="col-sm-6">
-                                                   <input type="text" class="form-control" value="0" name="packCount" id="packCount" autocomplete="off"/>
+                                                   <input type="number" step="any" class="form-control" value="0" name="packCount" id="packCount" autocomplete="off"/>
+                                               </div>
+                                           </div>
+                                           <div class="form-group row">
+                                                   <label class="col-sm-4 col-form-label" for="">Добавка</label>
+                                               <div class="col-sm-7 row " id="addition" >
+                                                   <div class="col-sm-6">
+                                                       <select name="addition" class="form-control " id="additionProd">
+                                                           <option value="0">Выберите добавку</option>
+                                                           <? foreach (\app\modules\calc\models\Product::findAll(["categoryId"=>10]) as $val){?>
+                                                               <option value="<?=$val->productId?>"><?=$val->name?></option>
+                                                           <?}?>
+                                                       </select>
+                                                   </div>
+                                                   <div class="col-sm-6">
+                                                        <input type="text" class="form-control" value="0" name="additionCnt" id="additionCnt" autocomplete="off"/>
+                                                   </div>
                                                </div>
                                            </div>
 
@@ -191,7 +211,7 @@ $this->registerJs($js);
                               
                           
                           <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                              <button type="button" class="btn btn-secondary" id="btnCencel" data-dismiss="modal">Закрыть</button>
 
                           </div>
                         </div>
@@ -230,25 +250,43 @@ $this->registerJs($js);
                             </select>
                         </div>
                       </div>
+                        <div class="form-group row">
+                            <label for="staticClients" class="col-sm-2 col-form-label">Отправитель</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="fromId" id="froms">
+                                    <?php
+                                    foreach ($mFrom as $item)
+                                    {
+                                        echo '<option value="'.$item->fromId.'">'.$item->fromName.'</option>';
+                                    }
+                                    ?>
+
+
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-gr-oup row">
                             <label for="staticId" class="col-sm-2 col-form-label">Комментарий</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="comment" value="<?=$model->comment ?>" placeholder="комментарий если есть"/>
                             </div>
                         </div>
+                        <br>
                       <div class="form-group row">
 
                           <div class="col">
 
-                              <a href="/sold/expense" class="btn btn-success"><-Назад</a>
+                              <a href="/sold/expense/inprocesslist" class="btn btn-success"><-Назад</a>
 
                               <button id="btnNext" type="submit" class="btn btn-warning">Продолжить-></button>
 
                         </div>
+
                           <div class="col-2">
                               <a id="btnModal" href="#" class="btn btn-primary" data-toggle="modal" data-target="#mainModal" >Добавить товар</a>
                           </div>
-                          
+
                       </div>
                     </form>
                 </div>

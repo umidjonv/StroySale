@@ -32,9 +32,11 @@ class Struct extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['cnt', 'required', 'message' => 'Количество не может быть пустым'],
+            ['stuffProdId', 'required', 'message' => 'Выберите продукт или продукцию'],
             [['stuffId', 'stuffProdId'], 'integer'],
             [['cnt'], 'number'],
-            [['idType'], 'boolean'],
+            [['idType'], 'integer'],
             [['stuffId'], 'exist', 'skipOnError' => true, 'targetClass' => Stuff::className(), 'targetAttribute' => ['stuffId' => 'stuffId']],
         ];
     }
@@ -45,6 +47,8 @@ class Struct extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            ['cnt', 'required', 'message' => 'Количество не может быть пустым'],
+            ['stuffId', 'required', 'message' => 'Выберите продукт или продукцию'],
             'structId' => 'Struct ID',
             'stuffId' => 'Stuff ID',
             'stuffProdId' => 'Stuff Prod ID',

@@ -34,8 +34,8 @@ class Orders extends \yii\db\ActiveRecord
     {
         return [
             [['expenseId', 'stuffProdId'], 'required'],
-            [['expenseId', 'stuffProdId', 'idType'], 'integer'],
-            [['packCount', 'orderSumm', 'faktCount'], 'number'],
+            [['expenseId', 'stuffProdId', 'idType','addition'], 'integer'],
+            [['packCount', 'orderSumm', 'faktCount','additionCnt'], 'number'],
         ];
     }
 

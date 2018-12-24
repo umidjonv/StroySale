@@ -1,20 +1,47 @@
 <?php 
 $js = <<<JS
 
-    $("#mainTable").Custom({
+    var table = $("#mainTable").Custom({
     Columns:[
             {"data":'expenseId'},
             {"data":'expenseDate'},
             
             {"data":'clientId'},
             {"data":'clientName'},
+            {"data":'from'},
             {"data":'comment'},
             {"data":'paidType'},
             {"data":'paidTypeName'},
             {"data":'expSum'},
+            {"data":'deliveryType'},
             {"data":'deliveryPrice'},
             {"data":'delivery'},
-             
+            {
+                "mDataProp": function (source, type, val) {
+                    if (type === 'set') {
+
+                        return;
+                    }
+                    else if (type === 'display') {
+                        return '<a href="/sold/orders/list/'+source.expenseId+'" class="btn btn-default" id="orderRecord' + source.expenseId + '">Список</a>';
+                    }
+
+                },
+                "sDefaultContent": '<a href="/sold/orders/list/0" class="btn btn-default" id="orderRecord">Список</a>'
+            }, 
+            {
+                "mDataProp": function (source, type, val) {
+                    if (type === 'set') {
+
+                        return;
+                    }
+                    else if (type === 'display') {
+                        return '<a href="/sold/expense/nakladnaya/' + source.expenseId + '" class="btn btn-default" name="nakladnayaRecord">Накладная</a>';
+                    }
+
+                },
+                "sDefaultContent": '<a href="#" class="btn btn-default" name="deleteRecord"><span class="oi oi-x"></span></a>'
+            },
             {
                 "mDataProp": function (source, type, val) {
                     if (type === 'set') {
@@ -30,6 +57,7 @@ $js = <<<JS
             },
 
         ],
+        
         columnDefs: [
             
             {
@@ -38,7 +66,7 @@ $js = <<<JS
                 "searchable": false
             },
             {
-                "targets": [ 5 ],
+                "targets": [ 6 ],
                 "visible": false,
                 "searchable": false
             },
@@ -53,6 +81,8 @@ $js = <<<JS
     newUrl:"/sold/expense/new"
 
 });
+
+ 
 JS;
 $this->registerJs($js);
 $session = Yii::$app->session;
@@ -62,19 +92,22 @@ if($session->isActive)
 ?>
 
 <h3>Продажи</h3>
-<div id="error"></div>       
+<div id="error"></div>
 <div class="row">
-<div class="col">
-                    
-                </div>
-                <a href="/sold/expense/step1" class="btn btn-info">Оформить заказ</a>
+    <div class="col"></div>
+    <div class="col-2"><a href="/sold/expense/step1" class="btn btn-info">Оформить заказ</a></div>
+</div>
+<div class="row">
+
+
+
             </div>
             <br/>
             <br/>
             
             
                 <div class="col">
-                    <table class="table" id="mainTable">
+                    <table class="table" id="mainTable" >
                       <thead class="thead-dark">
                         <tr>
                           <th scope="col">#</th>
@@ -82,14 +115,17 @@ if($session->isActive)
 
                           <th scope="col">КлиентИД</th>
                             <th scope="col">Клиент</th>
+                            <th scope="col">ОТ</th>
                             <th scope="col">Примечание</th>
                             <th scope="col">Тип оплаты</th>
-                          <th scope="col">Оплата</th>
-                          <th scope="col">Сумма</th>
+                            <th scope="col">Оплата</th>
+                            <th scope="col">Сумма</th>
+                            <th scope="col">Тип вывоза</th>
                             <th scope="col">Сумма доставки</th>
                             <th scope="col">Описание</th>
-
-                          <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                         </tr>
                       </thead>
                       
@@ -104,6 +140,9 @@ if($session->isActive)
                           <td></td>
                           <td></td>
                           <td></td>
+                            <th></th>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

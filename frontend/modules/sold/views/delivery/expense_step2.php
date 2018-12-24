@@ -1,5 +1,73 @@
 <?php
-echo 'aaa';
+$js = <<<JS
+
+$.ajax({                                                                                     
+                url: '/sold/delivery/getnames',                                                      
+                type: 'POST',                                                                   
+                                                                                               
+                success: function(res){              
+                   
+                    str = '<option value=""></option>';
+                    $.each(res, function(index, val){
+                        str += '<option value="'+val.name+'">'+val.name+'</option>';
+                    });
+                    $('#nameSelect').html(str);
+                    
+                    $('#nameSelect').chosen({width: "100%"});
+                },                                                                              
+                error: function(xhr){                                                           
+                    console.log(xhr.responseText);                                              
+                }                                                                               
+            });
+$.ajax({                                                                                     
+                url: '/sold/delivery/getdrivers',                                                      
+                type: 'POST',                                                                   
+                                                                                               
+                success: function(res){              
+                    
+                    str = '<option value=""></option>';
+                    $.each(res, function(index, val){
+                        str += '<option value="'+val.driver+'">'+val.driver+'</option>';
+                    });
+                    $('#driverSelect').html(str);
+                    
+                    $('#driverSelect').chosen({width: "100%"});
+                },                                                                              
+                error: function(xhr){                                                           
+                    console.log(xhr.responseText);                                              
+                }                                                                               
+            });
+$.ajax({                                                                                     
+                url: '/sold/delivery/getaddresses',                                                      
+                type: 'POST',                                                                   
+                                                                                               
+                success: function(res){              
+                    
+                    str = '<option value=""></option>';
+                    $.each(res, function(index, val){
+                        str += '<option value="'+val.address+'">'+val.address+'</option>';
+                    });
+                    $('#addressSelect').html(str);
+                    
+                    $('#addressSelect').chosen({width: "100%"});
+                },                                                                              
+                error: function(xhr){                                                           
+                    console.log(xhr.responseText);                                              
+                }                                                                               
+            });
+$('#nameSelect').on('change', function(){
+     $('#nameInput').val($(this).val());
+});
+$('#driverSelect').on('change', function(){
+     $('#driverInput').val($(this).val());
+});
+$('#addressSelect').on('change', function(){
+     $('#addressInput').val($(this).val());
+});
+
+JS;
+$this->registerJs($js);
+
 ?>
 <h3>Продажа дополнительно</h3>
 <div id="error"></div>
@@ -30,10 +98,32 @@ echo 'aaa';
     <div class="col-6">
 
         <form class="mainForm" id="mainForm1" action="/sold/delivery/save" method="POST">
+
+            <div class="form-group row">
+                <label for="staticName" class="col-sm-4 col-form-label">Ответственное лицо</label>
+                <div class="col-sm-6">
+                    <input type="text" id="nameInput" class="form-control" name="name" value="<?=$modelDelivery->name; ?>" autocomplete="off">
+                    <select id="nameSelect">
+
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="staticName" class="col-sm-4 col-form-label">Водитель</label>
+                <div class="col-sm-6">
+                    <input type="text" id="driverInput" class="form-control" name="driver" value="<?=$modelDelivery->driver; ?>" autocomplete="off">
+                    <select id="driverSelect">
+
+                    </select>
+                </div>
+            </div>
             <div class="form-group row">
                 <label for="staticAddress" class="col-sm-4 col-form-label">Адрес</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="address" id="formID" value="<?=$modelDelivery->address; ?>" autocomplete="off">
+                    <input type="text" id="addressInput" class="form-control" name="address" id="formID" value="<?=$modelDelivery->address; ?>" autocomplete="off">
+                    <select id="addressSelect">
+
+                    </select>
                 </div>
             </div>
             <div class="form-group row">
@@ -51,12 +141,7 @@ echo 'aaa';
 
                 </div>
             </div>
-            <div class="form-group row">
-                <label for="staticName" class="col-sm-4 col-form-label">Водитель</label>
-                <div class="col-sm-6">
-                    <input type="text" class="form-control" name="name" value="<?=$modelDelivery->name; ?>" autocomplete="off">
-                </div>
-            </div>
+
 
             <div class="form-group row">
                 <label for="staticDescription" class="col-sm-4 col-form-label">Описание</label>
@@ -77,12 +162,10 @@ echo 'aaa';
 
                 <div class="col">
                     <a id="btnPrev" href="/sold/expense/step1" class="btn btn-success"><-Назад</a>
-                    <button type="submit" class="btn btn-warning">Продолжить-></button>
+                    <button type="submit" class="btn btn-warning">Сохранить-></button>
 
                 </div>
-                <div class="col-2">
-                    <a id="btnModal" href="#" class="btn btn-primary" data-toggle="modal" data-target="#mainModal" >Добавить товар</a>
-                </div>
+
 
             </div>
         </form>

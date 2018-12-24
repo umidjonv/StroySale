@@ -14,7 +14,7 @@ $js = <<<JS
                         return;
                     }
                     else if (type === 'display') {
-                        return '<a href="#" class="btn btn-default" name="deleteRecord" id="delRecord' + source.providerId + '"><span class="oi oi-x"></span></a>';
+                        return '<a href="javascript:;" class="btn btn-default" name="deleteRecord" id="delRecord' + source.providerId + '"><span class="oi oi-x"></span></a>';
                     }
 
                 },

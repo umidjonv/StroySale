@@ -6,14 +6,14 @@ use app\modules\calc\models\Price;
 use app\modules\calc\models\Product;
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use app\components;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * ProductController implements the CRUD actions for Product model.
  */
-class ProductController extends Controller
+class ProductController extends components\BaseController
 {
     /**
      * @inheritdoc
@@ -69,16 +69,18 @@ class ProductController extends Controller
                 $model->price = Yii::$app->request->post()['price'];
                 $model->measureId = Yii::$app->request->post()['measureId'];
                 $model->categoryId = Yii::$app->request->post()['categoryId'];
-                if($model->save()){
-                    $price = new Price();
-                    $price->setPrice($model->price,1,$model->productId);
+                if($model->validate()) {
+                    if ($model->save()) {
+                        $price = new Price();
+                        $price->setPrice($model->price, 1, $model->productId);
+                    }
                 }
                 $models = Product::find()->all();
                 // var_dump($model);
                 if($isAjax)
                 {
                     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                    return $model->toArray();
+                    return $model->errors;
 
                 }else
                     return $this->render('index', ['models'=> $models]);
@@ -108,15 +110,17 @@ class ProductController extends Controller
             $form_model->price = Yii::$app->request->post()['price'];
             $form_model->measureId = Yii::$app->request->post()['measureId'];
             $form_model->categoryId = Yii::$app->request->post()['categoryId'];
-            if($form_model->save()){
-                $price = new Price();
-                $price->setPrice($form_model->price,1,$form_model->productId);
+            if($form_model->validate()) {
+                if ($form_model->save()) {
+                    $price = new Price();
+                    $price->setPrice($form_model->price, 1, $form_model->productId);
+                }
             }
             $models = Product::find();
             if($isAjax)
             {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return $form_model->toArray();
+                return $form_model->errors;
 
             }else
                 return $this->render('index', ['models'=> $models]);

@@ -36,9 +36,9 @@ $this->registerJs($js);
 
 <h3>Категория</h3>
 <div id="error"></div>
-<?php// print_r($models->all()[0]->name) ?>
+
 <div class="row">
-    <div class="col">
+    <div class="col collapse" id="formBlock">
         <form class="mainForm" id="mainForm1" action="/category/save" method="POST">
             <div class="form-group row">
                 <label for="formID" class="col-sm-2 col-form-label">ID</label>
@@ -56,16 +56,22 @@ $this->registerJs($js);
 
                 </div>
                 <div class="col-sm-2">
-                    <a href="#" id="btnNew" class="btn btn-primary"><span class="oi oi-plus"></span> Новый</a>
+                    <a href="#" id="btnCencel" class="btn btn-primary"  > Отмена</a>
 
                 </div>
 
             </div>
         </form>
+
+
+    </div>
+    <div class="col-sm-2">
+        <a href="#" id="btnNew" class="btn btn-primary "  ><span class="oi oi-plus"></span> Новый</a>
+
     </div>
 
+
 </div>
-<br/>
 <br/>
 
 

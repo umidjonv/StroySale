@@ -22,6 +22,7 @@ use Yii;
  * @property int $userId
  * @property int $paidType
  * @property int $charge
+ * @property int $fromId
  */
 class Expense extends \yii\db\ActiveRecord
 {
@@ -67,6 +68,7 @@ class Expense extends \yii\db\ActiveRecord
             'userId' => 'Пользователь',
             'paidType' => 'Тип оплаты',
             'charge' => 'Наценка',
+            'from' => 'От имени',
         ];
     }
     
@@ -83,6 +85,11 @@ class Expense extends \yii\db\ActiveRecord
     public function getOrders()
     {
         return $this->hasMany(\app\modules\sold\models\Orders::className(), ['expenseId' => 'expenseId']);
+    }
+
+    public function getFrom()
+    {
+        return $this->hasOne(\app\models\From::className(), ['fromId' => 'fromId']);
     }
 
 }

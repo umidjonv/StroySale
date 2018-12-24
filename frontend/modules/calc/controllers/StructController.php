@@ -8,14 +8,14 @@ use app\modules\calc\models\Stuff;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use app\components;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * ProductController implements the CRUD actions for Product model.
  */
-class StructController extends Controller
+class StructController extends components\BaseController
 {
     /**
      * @inheritdoc
@@ -58,13 +58,15 @@ class StructController extends Controller
                 $model->stuffProdId = Yii::$app->request->post()['stuffProdId'];
                 $model->cnt = Yii::$app->request->post()['cnt'];
                 $model->idType = Yii::$app->request->post()['idType'];
-                $model->save();
+                if($model->validate()){
+                    $model->save();
+                }
                 $models = Struct::find()->all();
                 // var_dump($model);
                 if($isAjax)
                 {
                     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                    return $model->toArray();
+                    return $model->errors;
 
                 }else
                     return $this->render('index', ['models'=> $models]);
@@ -93,12 +95,14 @@ class StructController extends Controller
             $form_model->stuffProdId = Yii::$app->request->post()['stuffProdId'];
             $form_model->cnt = Yii::$app->request->post()['cnt'];
             $form_model->idType = Yii::$app->request->post()['idType'];
-            $form_model->save();
+            if($form_model->validate()){
+                $form_model->save();
+            }
             $models = Struct::find();
             if($isAjax)
             {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return $form_model->toArray();
+                return $form_model->errors;
 
             }else
                 return $this->render('index', ['models'=> $models]);

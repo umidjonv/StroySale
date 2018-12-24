@@ -31,6 +31,7 @@ class Measure extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['name', 'required', 'message' => 'Наименование не может быть пустым'],
             [['name'], 'string', 'max' => 100],
         ];
     }

@@ -18,6 +18,7 @@ class AppAsset extends AssetBundle
         'css/jquery-ui.min.css',
         'css/jquery-ui.theme.min.css',
         'css/chosen.min.css',
+        'css/chosen-bootstrap.css',
         'DataTables/datatables.css',
         
         'css/custom.css',

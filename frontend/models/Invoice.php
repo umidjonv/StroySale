@@ -12,8 +12,12 @@ use Yii;
  * @property string $transportType
  * @property string $description
  * @property int $providerId
+ * @property string $deliveryDate
+ * @property double $invoiceSumm
+ * @property string $driver
+ * @property string $phone
  *
- * @property Provider $provider
+ * @property Clients $provider
  * @property InvoiceEx[] $invoiceExes
  */
 class Invoice extends \yii\db\ActiveRecord
@@ -32,11 +36,17 @@ class Invoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoiceDate'], 'safe'],
+            [['deliveryDate'], 'required', 'message' => 'Дата поставки объязательно к заполнению'],
+            [['invoiceDate', 'deliveryDate'], 'safe'],
             [['providerId'], 'integer'],
+            [['expNum'], 'string', 'max' => 100],
+            [['invoiceSumm'], 'number'],
             [['transportType'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 255],
-            [['providerId'], 'exist', 'skipOnError' => true, 'targetClass' => Provider::className(), 'targetAttribute' => ['providerId' => 'providerId']],
+            [['driver'], 'string', 'max' => 200],
+            [['phone'], 'string', 'max' => 100],
+            [['carNumber'], 'string', 'max' => 50],
+            [['providerId'], 'exist', 'skipOnError' => true, 'targetClass' => Clients::className(), 'targetAttribute' => ['providerId' => 'clientId']],
         ];
     }
 
@@ -51,6 +61,12 @@ class Invoice extends \yii\db\ActiveRecord
             'transportType' => 'Transport Type',
             'description' => 'Description',
             'providerId' => 'Provider ID',
+            'deliveryDate' => 'Delivery Date',
+            'invoiceSumm' => 'Invoice Summ',
+            'driver' => 'Driver',
+            'phone' => 'Phone',
+            'carNumber' => 'Car number',
+            'expNum' => 'Expense number',
         ];
     }
 
@@ -59,7 +75,7 @@ class Invoice extends \yii\db\ActiveRecord
      */
     public function getProvider()
     {
-        return $this->hasOne(Provider::className(), ['providerId' => 'providerId']);
+        return $this->hasOne(Clients::className(), ['clientId' => 'providerId']);
     }
 
     /**

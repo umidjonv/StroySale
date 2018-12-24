@@ -37,11 +37,23 @@ $.fn.Custom = function ( opts ) {
         columnDefs:opts.columnDefs,
         order: opts.order,
         createdRow: function (row, data, dataIndex, cells) {
-            $(row).addClass('tableRow');
+            if(opts.rowClass==null)
+                $(row).addClass('tableRow');
+            else
+                $(row).addClass(opts.rowClass);
 
         },
         initComplete: function (settings, json) {
-
+            if(opts.init!=null)
+            {
+                opts.init();
+            }
+            $('#searchInput').keyup(function(){
+                $('#mainTable').DataTable().search($(this).val()).draw() ;
+            })
+            $('#searchInput').change(function(){
+                $('#mainTable').DataTable().search($(this).val()).draw() ;
+            })
 
         },
         drawCallback: function (settings) {
@@ -50,9 +62,21 @@ $.fn.Custom = function ( opts ) {
                 $.DeleteRecord(this);
 
             });
-            $("tr.tableRow").on("click", function () {
-                $.rowClick(this);
-            });
+            if(opts.RowClick!=null)
+            {
+                opts.RowClick();
+            }else
+            {
+                $("tr.tableRow").on("click", function () {
+                    $.rowClick(this);
+                });
+
+            }
+            if(opts.RowDraw!=null)
+            {
+                opts.RowDraw(settings);
+            }
+
             
             $('[name="extendModal"]').on('click', function(){
                if (typeof $.customModal === "function")
@@ -114,6 +138,7 @@ var noFunc = function () {$(this).dialog("close");};
                     $('#mainTable').DataTable().ajax.reload();
                     console.log(res+ " record deleted");
                     $.emptyValues();
+					$("#formBlock").collapse("hide");
                 },
                 error: function(xhr){
                     console.log(xhr.responseText);
@@ -125,16 +150,18 @@ var noFunc = function () {$(this).dialog("close");};
         
     };
     $.rowClick = function(elem) {
+		$("#formBlock").collapse("show");
+		        $("html,body").animate({
+		            scrollTop: $("#formBlock").offset().top
+		        }, 500);
         var tableData = $(elem).children("td").map(function() {
             return $(this).text();
         }).get();
 
-        console.log(tableData);
+		var $inputs = $(".mainForm :input");
 
-        var $inputs = $(".mainForm :input");
-
-          var values = {};
-          var i=0;
+		var values = {};
+        var i=0;
         $inputs.each(function() {
             //alert($(this).attr('name')+''+tableData[i]);
             $(this).val(tableData[i]);
@@ -143,16 +170,25 @@ var noFunc = function () {$(this).dialog("close");};
     };
     
     $.emptyValues = function(){
-        
+        $("#alertBox").remove();
+        $("#mainForm1 input").attr("style","");
          $("#mainForm1")[0].reset();
         $("#formID").val(0);
+		$('select').prop("selectedIndex", -1);
+        $("select").trigger("chosen:updated");
     };
     $('#btnNew').on('click', function(){
+        $("#formBlock").collapse("show");
+        $.emptyValues();
+    });
+    $('#btnCencel').on('click', function(){
+        $("#formBlock").collapse("hide");
         $.emptyValues();
     });
     $('#mainForm1').on('submit', function(){
         var formId = $('#formID').val();
         var url1 = opts.saveUrl;
+		var form = $(this);
         if(formId == 0)
         {
             url1 = opts.newUrl;
@@ -165,12 +201,25 @@ var noFunc = function () {$(this).dialog("close");};
             type: 'POST',
             data: data,
             success: function(res){
-            $('#mainTable').DataTable().ajax.reload();
-            $.emptyValues();
-            
-                                
-        
-                
+            if(Object.keys(res).length != 0){
+                    $("#alertBox").remove();
+                    var str = '<div class="alert alert-danger alert-dismissible fade show" role="alert" id="alertBox">';
+                    $.each(res, function (index,val) {
+                        str += val[0]+"<br>";
+                        $("[name='"+index+"']").css("border-color","#dc3545");
+                    });
+                    str += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                        '<span aria-hidden="true">&times;</span>'+
+                        '</button>'+
+                        '</div>';
+                    form.prepend(str);
+                }
+                else {
+                    $("#formBlock").collapse("hide");
+                    $('#mainTable').DataTable().ajax.reload();
+                    $.emptyValues();
+                    $("#alertBox").remove();
+                }    
             },
             error: function(xhr){
                 console.log(xhr.responseText);
@@ -179,7 +228,7 @@ var noFunc = function () {$(this).dialog("close");};
         
         return false; 
     });    
-            
+      
     $.DeleteRecordAll = function(elem, delurl, isConfirmDialog){
         
         eId = $(elem).attr('id');
@@ -212,7 +261,58 @@ var noFunc = function () {$(this).dialog("close");};
             yesFunc();
         
     };
-    
-   
+
+    $(".dataTables_filter").hide();
+    $.ajax({
+        url: '/sold/expense/getsearch',
+        type: 'POST',
+        data:{'url':window.location.href},
+        success: function(res){
+            if(res!='not') {
+                $('#searchInput').val(res);
+                $('#mainTable').DataTable().search(res).draw();
+                console.log(res);
+            }
+
+        },
+        error: function(xhr){
+            console.log(xhr.responseText);
+        }
+
+    });
             
 }
+var Timer;
+
+function Start() {
+
+    $('#searchInput').keyup(function () {
+
+        clearTimeout(Timer);
+        Timer = setTimeout(SendRequest, 1000);
+    });
+}
+//$('#saveSearch').on('click', function(){
+function SendRequest() {
+
+    var key = $("#searchInput").val();
+    //alert(key);
+    $.ajax({
+        url: '/sold/expense/setsearch',
+        type: 'POST',
+        data:{'searchset':{'url':window.location.href, 'value':key}},
+        success: function(res){
+
+            console.log(res);
+
+        },
+        error: function(xhr){
+            console.log(xhr.responseText);
+        }
+
+    });
+//    });
+}
+$(Start);
+
+

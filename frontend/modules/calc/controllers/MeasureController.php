@@ -4,14 +4,14 @@ namespace app\modules\calc\controllers;
 
 use Yii;
 use app\modules\calc\models\Measure;
-use yii\web\Controller;
+use app\components;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * ProductController implements the CRUD actions for Product model.
  */
-class MeasureController extends Controller
+class MeasureController extends components\BaseController
 {
     /**
      * @inheritdoc
@@ -64,13 +64,15 @@ class MeasureController extends Controller
 
                 $model->measureId = Yii::$app->request->post()['measureId'];
                 $model->name = Yii::$app->request->post()['name'];
-                $model->save();
+                if($model->validate()){
+                    $model->save();
+                }
                 $models = Measure::find()->all();
                 // var_dump($model);
                 if($isAjax)
                 {
                     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                    return $model->toArray();
+                    return $model->errors;
 
                 }else
                     return $this->render('index', ['models'=> $models]);
@@ -97,12 +99,14 @@ class MeasureController extends Controller
         if ($form_model->load(Yii::$app->request->post(), '')) {
             $form_model->measureId = Yii::$app->request->post()['measureId'];
             $form_model->name = Yii::$app->request->post()['name'];
-            $form_model->save();
+            if($form_model->validate()){
+                $form_model->save();
+            }
             $models = Measure::find();
             if($isAjax)
             {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return $form_model->toArray();
+                return $form_model->errors;
 
             }else
                 return $this->render('index', ['models'=> $models]);

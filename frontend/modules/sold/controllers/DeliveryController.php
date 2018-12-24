@@ -8,14 +8,14 @@ use app\modules\sold\models\Expense;
 use app\modules\sold\models\Delivery;
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use app\components;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * ProductController implements the CRUD actions for Product model.
  */
-class DeliveryController extends Controller
+class DeliveryController extends components\BaseController
 {
     public function actionIndex()
     {
@@ -35,7 +35,13 @@ class DeliveryController extends Controller
         {
             $modelDelivery  = new Delivery();
 
+
             $expId = $session['expenseId'];
+            if(Delivery::find()->where(['expenseId'=>$expId])->exists())
+            {
+                $modelDelivery= Delivery::find()->where(['expenseId'=>$expId])->one();
+            }
+
             $model = Expense::find()->where(['expenseId' => $expId])->orderBy(['expenseId' => SORT_DESC])->one();
             //var_dump($model);
 
@@ -60,33 +66,89 @@ class DeliveryController extends Controller
         if((isset($session['expenseId'])&& isset($session['step'])) && ($session['step']==2&&($model->load(Yii::$app->request->post(), ''))) )
         {
 
-
             $expId = $session['expenseId'];
-
-            $model->expenseId = $expId;
-            $model->deliveryType = Yii::$app->request->post()['deliveryType'];
-            $model->name = Yii::$app->request->post()['name'];
-            $model->description = Yii::$app->request->post()['description'];
-            $model->price =  Yii::$app->request->post()['price'];
-            $model->address = Yii::$app->request->post()['address'];
-            if($model->validate())
+            $modelEx = Expense::find()->where(['expenseId'=>$expId])->one();
+            if(Delivery::find()->where(['expenseId'=>$expId])->exists())
             {
-                $model->save();
-                return 'OK';
+                $model = Delivery::find()->where(['expenseId'=>$expId])->one();
+
+                //$model= Delivery::find()->where(['expenseId'=>$expId])->one();
+                //$this->redirect('/sold/expense/nakladnaya/'.$expId);
             }else
             {
-                return var_dump(Yii::$app->request->post()['deliveryType']);
+
+                //$modelEx->status = 0;
+                //$modelEx->expSum = $modelEx->expSum+ Yii::$app->request->post()['price'];
+                //$modelEx->save();
+                $model->expenseId = $expId;
             }
+                $model->deliveryType = Yii::$app->request->post()['deliveryType'];
+                $model->name = Yii::$app->request->post()['name'];
+                $model->driver = Yii::$app->request->post()['driver'];
+                $model->description = Yii::$app->request->post()['description'];
+                $model->price =  Yii::$app->request->post()['price'];
+                $model->address = Yii::$app->request->post()['address'];
+                $session->remove('expenseId');
+                if($model->validate())
+                {
+                    //var_dump($model->price);
+                    $modelEx->expSum += isset($model->price)?$model->price:0;
+                    if($modelEx->validate())
+                    {
+                        $modelEx->save();
+                    }else
+                    {
+                        return 'sss'.var_dump($modelEx->errors);
+                    }
+
+                    $model->save();
+                    $this->redirect('/sold/expense/nakladnaya/'.$expId);
+                }else
+                {
+                    return var_dump($model->errors);
+                }
+
+
+
+
+
 
         }else
         {
-            $this->redirect('/sold/expense');
+            $this->redirect('/sold/expense/inprocesslist');
         }
         }catch(\Exception $ex)
         {
             return $ex->getMessage();
         }
 
+    }
+    public function actionGetnames()
+    {
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        //$this->redirect("site/login");
+        $my = (new yii\db\Query())->select(['name'])->from('delivery')->distinct()->all();
+
+        return $my;
+    }
+    public function actionGetdrivers()
+    {
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        //$this->redirect("site/login");
+        $my = (new yii\db\Query())->select(['driver'])->from('delivery')->distinct()->all();
+
+        return $my;
+    }
+    public function actionGetaddresses()
+    {
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        //$this->redirect("site/login");
+        $my = (new yii\db\Query())->select(['address'])->from('delivery')->distinct()->all();
+
+        return $my;
     }
 
 }

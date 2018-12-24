@@ -31,8 +31,10 @@ class InvoiceEx extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['cnt'], 'required', 'message' => 'Надо указать количество'],
             [['productId', 'invoiceId'], 'integer'],
             [['cnt'], 'number'],
+            [['invoiceExSum'], 'number'],
             [['invoiceId'], 'exist', 'skipOnError' => true, 'targetClass' => Invoice::className(), 'targetAttribute' => ['invoiceId' => 'invoiceId']],
             [['productId'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['productId' => 'productId']],
         ];
@@ -48,6 +50,7 @@ class InvoiceEx extends \yii\db\ActiveRecord
             'productId' => 'Product ID',
             'cnt' => 'Cnt',
             'invoiceId' => 'Invoice ID',
+            'invoiceExSum' => 'invoiceExSum'
         ];
     }
 

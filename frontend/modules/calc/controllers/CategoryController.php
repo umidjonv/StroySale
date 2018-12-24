@@ -4,14 +4,14 @@ namespace app\modules\calc\controllers;
 
 use Yii;
 use app\modules\calc\models\Category;
-use yii\web\Controller;
+use app\components;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * CategoryController implements the CRUD actions for Category model.
  */
-class CategoryController extends Controller
+class CategoryController extends components\BaseController
 {
     /**
      * @inheritdoc
@@ -64,13 +64,15 @@ class CategoryController extends Controller
 
                 $model->categoryId = Yii::$app->request->post()['categoryId'];
                 $model->name = Yii::$app->request->post()['name'];
-                $model->save();
+                if($model->validate()){
+                    $model->save();
+                }
                 $models = Category::find()->all();
                 // var_dump($model);
                 if($isAjax)
                 {
                     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                    return $model->toArray();
+                    return $model->errors;
 
                 }else
                     return $this->render('index', ['models'=> $models]);
@@ -97,12 +99,14 @@ class CategoryController extends Controller
         if ($form_model->load(Yii::$app->request->post(), '')) {
             $form_model->categoryId = Yii::$app->request->post()['categoryId'];
             $form_model->name = Yii::$app->request->post()['name'];
-            $form_model->save();
+            if($form_model->validate()){
+                $form_model->save();
+            }
             $models = Category::find();
             if($isAjax)
             {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return $form_model->toArray();
+                return $form_model->errors;
 
             }else
                 return $this->render('index', ['models'=> $models]);

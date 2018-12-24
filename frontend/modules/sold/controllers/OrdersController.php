@@ -1,8 +1,12 @@
 <?php
 
 namespace app\modules\sold\controllers;
+use app\components\BaseController;
+use app\models\Balance;
 use app\modules\calc\models\Product;
 use app\modules\calc\models\Stuff;
+use app\modules\sold\models\Delivery;
+use app\modules\sold\models\Expense;
 use app\modules\sold\models\Orders;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -13,7 +17,7 @@ use yii\filters\VerbFilter;
 /**
  * ProductController implements the CRUD actions for Product model.
  */
-class OrdersController extends Controller
+class OrdersController extends BaseController
 {
     /**
      * @inheritdoc
@@ -69,21 +73,44 @@ class OrdersController extends Controller
                 $model->stuffProdId = Yii::$app->request->post()['stuffProdId'];
                 $model->packCount = Yii::$app->request->post()['packCount'];
                 $model->faktCount = $model->packCount;
+                $model->addition = Yii::$app->request->post()['addition'];
+                $model->additionCnt = Yii::$app->request->post()['additionCnt'];
+                
+
+
                 $model->idType = Yii::$app->request->post()['idType'];
-                if($model->idType)
+                $mProduct = new Product();
+                $mStuff = new Stuff();
+                if($model->idType==0)
                 {
-                    $mProduct = Product::find()->where(['productId'=>$model->stuffProdId])->one();
-                    $model->orderSumm = $model->packCount * $mProduct->price;
+                    if(Yii::$app->request->post()['addition'] != 0) {
+                        $mProduct = Product::find()->where(['productId' => $model->stuffProdId])->one();
+                        $addition = Product::find()->where(['productId' => $model->addition])->one();
+                        $model->orderSumm = $model->packCount * ($mProduct->price + Yii::$app->request->post()["additionCnt"]*$addition->price);
+                    }
+                    else{
+                        $mProduct = Product::find()->where(['productId' => $model->stuffProdId])->one();
+                        $model->orderSumm = $model->packCount * $mProduct->price;
+                    }
                 }
                 else
                 {
-                    $mProduct = Stuff::find()->where(['stuffId'=>$model->stuffProdId])->one();
-                    $model->orderSumm = $model->packCount * $mProduct->price;
+                    if(Yii::$app->request->post()['addition'] != 0) {
+                        $mStuff = Stuff::find()->where(['stuffId' => $model->stuffProdId])->one();
+                        $addition = Product::find()->where(['productId' => $model->addition])->one();
+                        $model->orderSumm = $model->packCount * ($mStuff->price + Yii::$app->request->post()["additionCnt"]*$addition->price);
+                    }
+                    else{
+                        $mStuff = Stuff::find()->where(['stuffId' => $model->stuffProdId])->one();
+                        $model->orderSumm = $model->packCount * $mStuff->price;
+                    }
                 }
 
                 //$model->orderSumm = $model->packCount *  ($model->idType==0?$model->product->price:$model->stuffProdId;
                 if($model->validate())
                 {
+                    $modelBalance = new Balance();
+                    $modelBalance->removeFromBalance($model->stuffProdId,$model->idType, $model->faktCount);
                     $model->save();
                     return $this->actionRefreshd($model->expenseId);
                 }else
@@ -102,38 +129,92 @@ class OrdersController extends Controller
         //return $this->render('index', ['model'=> $model]);
     }
 
-    public function actionNew()
+    public function actionSavelist($id)
     {
-        $form_model =  new Expense();
-        
-        //if ($form_model->load(Yii::$app->request->post(), '')) {
-        $date = new \DateTime();
-        
-        
-        $form_model->expenseDate = $date->format('Y-m-d H:i:s');
-        $form_model->debt = 0;
-        $form_model->comment = '';
-        $form_model->clientId = null;//Yii::$app->request->post()['clientId'];
-        $form_model->fakt = 0;
-        $form_model->expType = 0;
-        $form_model->transfer = 0;
-        $form_model->inCash = 0;
-        $form_model->terminal = 0;
-        $form_model->expSum = 0;
-        $form_model->status = 1;
-        $form_model->userId = \Yii::$app->user->id;
-        $form_model->paidType = 0;
-        $form_model->charge = 0;
+        $model = new Orders();
+        $model = Orders::find()->where(['orderId'=>$id])->one();
 
-        $form_model->save(false);
-        //var_dump($form_model);
-            
-            
-        return $this->render('create', ['model'=> $form_model]);
+        $mainForm = null;
+        //return var_dump(Yii::$app->request->post());
+        if(isset(Yii::$app->request->post()['mainform'])) {
+            $mainForm = Yii::$app->request->post()['mainform'];
+            $deliveryPrice = '';
+            if(isset(Yii::$app->request->post()['form2']))
+            {
 
-        //}
-        
-        //return $this->render('create', ['model'=> $form_model]);
+                $form2 = Yii::$app->request->post()['form2'];
+
+                $deliveryPrice = $form2['deliveryPrice'];
+                $modelDelivery = Delivery::find()->where(['expenseId'=>$model->expenseId])->one();
+
+
+                $modelDelivery->price = $deliveryPrice;
+
+                if($modelDelivery->validate())
+                {
+                    $modelDelivery->save();
+
+
+
+                } else {
+                    return var_dump($modelDelivery->errors);
+                }
+               // return 'sav2';
+            }
+
+
+
+            $cena = $mainForm['newCena'];
+            $fakt = $mainForm['fakt'];
+            //$expSum = $mainForm['expSum'];
+
+            $ostatok = 0;
+            if ($model->faktCount != $fakt)
+                $ostatok = $model->faktCount - $fakt;
+
+            $model->orderSumm = $cena * $fakt;
+
+            $model->faktCount = $fakt;
+            if ($model->validate()) {
+                if ($ostatok > 0) {
+                    $modelBalance = new Balance();
+                    if ($fakt > 0)
+                        $modelBalance->addToBalance($model->stuffProdId, $model->idType, $ostatok);
+                    else if ($fakt < 0) {
+                        $modelBalance->removeFromBalance($model->stuffProdId, $model->idType, $ostatok);
+                    }
+                }
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                //$modelEx = Expense::find()->where(['expenseId'=>$id])->one();
+                //$modelEx->expSum = $expSum;
+                //$modelEx->save();
+                $model->save();
+                $modelEx = Expense::find()->where(['expenseId'=>$model->expenseId])->one();
+                $expSumm = 0;
+                foreach ($modelEx->orders as $order)
+                {
+                    $expSumm += $order->orderSumm;
+                }
+                $expSumm += $modelDelivery->price;
+                //$modelEx->expsum;
+                $modelEx->expSum = $expSumm;
+
+                $modelEx->save(false);
+                return [ 'status'=>'OK' , 'expSum'=> $expSumm ];
+            } else {
+                return var_dump($model->errors);
+            }
+        }
+
+
+
+    }
+
+    public function actionList($id)
+    {
+        $expenseModel = Expense::find()->where(['expenseId'=>$id])->one();
+
+        return $this->render('list', ['expenseId'=>$id, 'exModel'=>$expenseModel]);
     }
 
     
@@ -143,8 +224,15 @@ class OrdersController extends Controller
         $id = Yii::$app->request->post()['id'];
 
         try {
-            $rowCnt = Orders::deleteAll('orderId='.$id);
-            return $rowCnt;
+
+            $modelOrders = Orders::find()->where(['orderId'=>$id])->one();
+            //$rowCnt = Orders::deleteAll('orderId='.$id);
+
+            $modelBalance = new Balance();
+            $modelBalance->addToBalance($modelOrders->stuffProdId,$modelOrders->idType, $modelOrders->faktCount);
+            $modelOrders->delete();
+
+            return 1;
         }  catch (\yii\db\Exception $e) {
             echo $e->getMessage();
         }
@@ -163,17 +251,21 @@ class OrdersController extends Controller
                 'orderId',
                 'expenseId',
                 'stuffProdId',
-                
                 'packCount',
                 'faktCount',
                 'orderSumm',
                 'idType',
                 'productName'=>function($data){
+                    $addition = " ";
+                    if($data->addition != 0){
+                        $prod = Product::findOne(["productId"=>$data->addition]);
+                        $addition .= "c ".$prod->name."-".$data->additionCnt;
+                    }
                     if($data->idType==0) {
-                        return $data->product->name;
+                        return $data->product->name.$addition;
                     }else
                     {
-                        return $data->stuff->name;
+                        return $data->stuff->name.$addition;
                     }
                 },
                 //'category'=>function($data){

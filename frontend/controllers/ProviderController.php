@@ -4,7 +4,7 @@ namespace frontend\controllers;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
+use app\components;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 //use \app\models\Provider;
@@ -14,7 +14,7 @@ use frontend\models\Provider;
 /**
  * Site controller
  */
-class ProviderController extends Controller
+class ProviderController extends components\BaseController
 {
     public function actionIndex()
     {

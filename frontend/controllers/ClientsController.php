@@ -4,7 +4,7 @@ namespace frontend\controllers;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
+use app\components;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 //use \app\models\Provider;
@@ -14,8 +14,9 @@ use frontend\models\Clients;
 /**
  * Site controller
  */
-class ClientsController extends Controller
+class ClientsController extends components\BaseController
 {
+    public $layout = '@app/views/layouts/accounting';
     public function actionIndex()
     {
         
@@ -56,13 +57,20 @@ class ClientsController extends Controller
             $model->address = Yii::$app->request->post()['address'];
             $model->ogrn = Yii::$app->request->post()['ogrn'];
             $model->schet = Yii::$app->request->post()['schet'];
-            $model->save();
+            $model->faktaddress = Yii::$app->request->post()['faktaddress'];
+            $model->phone = Yii::$app->request->post()['phone'];
+            $model->email = Yii::$app->request->post()['email'];
+            $model->response = Yii::$app->request->post()['response'];
+
+            if($model->validate()){
+                $model->save();
+            }
             $models = \app\models\Clients::find()->all();
             // var_dump($model);
             if($isAjax)
             {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;               
-                return $model->toArray();
+                return $model->errors;
                 
             }else
             return $this->render('index', ['models'=> $models]);
@@ -94,12 +102,18 @@ class ClientsController extends Controller
             $model->address = Yii::$app->request->post()['address'];
             $model->ogrn = Yii::$app->request->post()['ogrn'];
             $model->schet = Yii::$app->request->post()['schet'];
-            $model->save();
+            $model->faktaddress = Yii::$app->request->post()['faktaddress'];
+            $model->phone = Yii::$app->request->post()['phone'];
+            $model->email = Yii::$app->request->post()['email'];
+            $model->response = Yii::$app->request->post()['response'];
+            if($model->validate()){
+                $model->save();
+            }
             $models = \app\models\Clients::find();
             if($isAjax)
             {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return $model->toArray();
+                return $model->errors;
                 
             }else
             return $this->render('index', ['models'=> $models]);

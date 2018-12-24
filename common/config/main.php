@@ -1,9 +1,10 @@
 <?php
 return [
-    'aliases' => [
+    'aliases' => array(
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-    ],
+
+    ),
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
         'cache' => [
@@ -19,6 +20,9 @@ return [
         ],
         'accounting' => [
             'class' => 'app\modules\accounting\accounting',
+        ],
+        'reports' => [
+            'class' => 'app\modules\reports\reports',
         ],
     ],
 ];

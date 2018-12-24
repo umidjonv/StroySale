@@ -33,6 +33,7 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['name', 'required', 'message' => 'Наименование не может быть пустым'],
             [['measureId', 'categoryId'], 'integer'],
             [['name'], 'string', 'max' => 100],
             [['price'], 'number'],

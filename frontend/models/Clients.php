@@ -14,6 +14,7 @@ use Yii;
  * @property string $address
  * @property string $ogrn
  * @property string $schet
+ * @property double $summ
  */
 class Clients extends \yii\db\ActiveRecord
 {
@@ -31,9 +32,9 @@ class Clients extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['inn', 'bank', 'address', 'ogrn', 'schet'], 'required'],
-            [['schet'], 'number'],
-            [['clientName'], 'string', 'max' => 255],
+            [['clientName'], 'required', 'message' => 'Имя клинента не может быть пустым'],
+            [['schet', 'summ'], 'number'],
+            [['clientName', 'faktaddress', 'phone', 'email', 'response'], 'string', 'max' => 255],
             [['inn', 'ogrn'], 'string', 'max' => 200],
             [['bank', 'address'], 'string', 'max' => 300],
         ];
@@ -52,8 +53,11 @@ class Clients extends \yii\db\ActiveRecord
             'address' => 'Address',
             'ogrn' => 'Ogrn',
             'schet' => 'Schet',
+            'summ' => 'Summ',
+            'faktaddress' => 'Fakt address',
+            'phone' => 'Phone',
+            'email' => 'emsil',
+            'response' => 'responsible person',
         ];
     }
-
-
 }

@@ -7,6 +7,10 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\captcha\Captcha;
+$ma = array();
+$ma = [4 => 'KLM',65=>'kkk',5=>'aaa',4=>'dfg'];
+$ma2 = array();
+$ma2 = [4,65,5,4];
 
 $this->title = 'Contact';
 $this->params['breadcrumbs'][] = $this->title;
@@ -17,6 +21,20 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         If you have business inquiries or other questions, please fill out the following form to contact us. Thank you.
     </p>
+
+    <table>
+        <thead></thead>
+        <tbody>
+        <tr>
+            <?php
+            foreach ($ma  as $key => $val)
+            {
+                echo '<td>'.$val.'</td>';
+            }
+            ?>
+        </tr>
+        </tbody>
+    </table>
 
     <div class="row">
         <div class="col-lg-5">

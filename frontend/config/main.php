@@ -45,7 +45,12 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                //'sold/expense/step1/<param:\d+>' => 'sold/expense/step1',
+                'reports/report/clientreportxls/<id:\d+>' => 'reports/report/clientreportxls',
+                'sold/expense/solded/<id:\d+>' => 'sold/expense/solded',
+                'sold/expense/existsold/<id:\d+>' => 'sold/expense/existsold',
+                'sold/orders/savelist/<id:\d+>' => 'sold/orders/savelist',
+                'sold/orders/list/<id:\d+>' => 'sold/orders/list',
+                'sold/expense/nakladnaya/<id:\d+>' => 'sold/expense/nakladnaya',
                 'sold/orders/refreshd/<id:\d+>' => 'sold/orders/refreshd',
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',

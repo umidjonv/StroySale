@@ -8,7 +8,9 @@ $("#mainTable").Custom({
             {"data":'price'},
             {"data":'energy'},
             {"data":'salary'},
+            {"data":'categoryId'},
             {"data":'measureId'},
+            {"data":'category'},
             {"data":'measure'},
             {
                 "mDataProp": function (source, type, val) {
@@ -208,9 +210,9 @@ $product = new \app\modules\calc\models\Stuff();
 ?>
 <h3>Продукция</h3>
 <div id="error"></div>
-<?php// print_r($models->all()[0]->name) ?>
+
 <div class="row">
-    <div class="col-sm-10">
+    <div class="col collapse" id="formBlock">
         <form class="mainForm" id="mainForm1" action="" method="POST">
             <div class="form-group row">
                 <label for="formID" class="col-sm-2 col-form-label">ID</label>
@@ -240,6 +242,12 @@ $product = new \app\modules\calc\models\Stuff();
                     <input type="number"  class="form-control" name="salary" id="inputStuffSalary" placeholder="Зар. плата">
                 </div>
             </div>
+            <div class="form-group row">
+                <label for="measureId" class="col-sm-2 col-form-label">Ед.Изм.</label>
+                <div class="col-sm-5">
+                    <?=\yii\helpers\Html::dropDownList("categoryId",'',\yii\helpers\ArrayHelper::map(\app\modules\calc\models\Category::find()->all(),'categoryId','name'),array('class'=>"form-control","id"=>"categoryId"))?>
+                </div>
+            </div>
             <div class="form-group row ">
                 <label for="measureId" class="col-sm-2 col-form-label">Ед.Изм.</label>
                 <div class="col-sm-5">
@@ -250,16 +258,22 @@ $product = new \app\modules\calc\models\Stuff();
 
                 </div>
                 <div class="col-sm-2">
-                    <a href="#" id="btnNew" class="btn btn-primary"><span class="oi oi-plus"></span>Новый</a>
+                    <a href="#" id="btnCencel" class="btn btn-primary"  > Отмена</a>
 
                 </div>
 
             </div>
         </form>
+
+
+    </div>
+    <div class="col-sm-2">
+        <a href="#" id="btnNew" class="btn btn-primary "  ><span class="oi oi-plus"></span> Новый</a>
+
     </div>
 
+
 </div>
-<br/>
 <br/>
 
 <div class="col">
@@ -272,30 +286,14 @@ $product = new \app\modules\calc\models\Stuff();
             <th scope="col">Энергия</th>
             <th scope="col">Зар.плата</th>
             <th scope="col">#</th>
+            <th scope="col">#</th>
+            <th scope="col">Категория</th>
             <th scope="col">Ед.Изм</th>
             <th></th>
             <th></th>
         </tr>
         </thead>
-        <?php if(isset($models)):?>
-            <tbody>
-
-            <?php foreach($models->all() as $model){?>
-                <tr class="tableRow">
-                    <td scope="row"><?= $model->stuffId ?></td>
-                    <td><?= $model->name ?></td>
-                    <td><?= $model->price ?></td>
-                    <td><?= $model->energy?></td>
-                    <td><?= $model->salary?></td>
-                    <td><?= $model->measureId?></td>
-                    <td><?= $model->measure->name?></td>
-                    <th></th>
-                    <td></td>
-                </tr>
-
-            <?php } ?>
-            </tbody>
-        <?php endif;?>
+        
     </table>
 
 </div>

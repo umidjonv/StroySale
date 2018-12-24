@@ -1,16 +1,17 @@
 <?php
 namespace frontend\controllers;
+use app\models\Balance;
+use app\models\InvoiceEx;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
+use app\components;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 //use \app\models\Provider;
-use frontend\models\invoiceEx;
 
-class InvoiceexController extends \yii\web\Controller
+class InvoiceexController extends components\BaseController
 {
     public function actionIndex()
     {
@@ -26,9 +27,12 @@ class InvoiceexController extends \yii\web\Controller
     public function actionDelete()
     {
         $id = Yii::$app->request->post()['id'];
-        //return "Ola";
         try {
+            $cnt = InvoiceEx::findOne(['invoiceExId'=>$id]);
             $rowCnt = \app\models\InvoiceEx::deleteAll('invoiceExId='.$id);
+            $balance = new Balance();
+            $balance->removeFromBalance($cnt->productId,0,$cnt->cnt);
+
             return $rowCnt;
         }  catch (\yii\db\Exception $e) {
             echo $e->getMessage();
@@ -46,17 +50,20 @@ class InvoiceexController extends \yii\web\Controller
         //$form_model->load(\Yii::$app->request->post());
 
         if ($form_model->load(Yii::$app->request->post(), '')) {
-            $form_model->stuffId = Yii::$app->request->post()['stuffId'];
-            $form_model->name = Yii::$app->request->post()['name'];
-            $form_model->measureId = Yii::$app->request->post()['measureId'];
-            $form_model->salary = Yii::$app->request->post()['salary'];
-            $form_model->energy = Yii::$app->request->post()['energy'];
-            $form_model->save();
-            $models = Stuff::find();
+            $form_model->productId = Yii::$app->request->post()['stuffProdId'];
+            $form_model->cnt = Yii::$app->request->post()['cnt'];
+            $form_model->invoiceId = Yii::$app->request->post()['id'];
+            if($form_model->validate()){
+                $form_model->save();
+
+                $balance = new Balance();
+                $balance->addToBalance(Yii::$app->request->post()['stuffProdId'],0,Yii::$app->request->post()['cnt']);
+            }
+            $models = \app\models\InvoiceEx::find();
             if($isAjax)
             {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return $form_model->toArray();
+                return $form_model->errors;
 
             }else
                 return $this->render('index', ['models'=> $models]);

@@ -10,7 +10,8 @@ use Yii;
  * @property int $expenseId
  * @property int $deliveryType
  * @property string $name
- * @property int $description
+ * @property string $driver
+ * @property string $description
  * @property int $price
  * @property string $address
  */
@@ -31,8 +32,9 @@ class Delivery extends \yii\db\ActiveRecord
     {
         return [
             [['expenseId'], 'required'],
-            [['expenseId', 'price'], 'integer'],
-            [['deliveryType'], 'string', 'max' => 1],
+            [['expenseId'], 'integer'],
+            [['price'], 'double'],
+            [['deliveryType'], 'integer', 'max' => 1],
             [['name', 'address', 'description'], 'string', 'max' => 200],
             [['expenseId'], 'unique'],
         ];
@@ -46,7 +48,9 @@ class Delivery extends \yii\db\ActiveRecord
         return [
             'expenseId' => 'Expense ID',
             'deliveryType' => 'Delivery Type',
+
             'name' => 'Name',
+            'driver' => 'Водитель',
             'description' => 'Description',
             'price' => 'Price',
             'address' => 'Address',
