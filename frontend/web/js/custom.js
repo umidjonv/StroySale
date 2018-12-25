@@ -37,10 +37,15 @@ $.fn.Custom = function ( opts ) {
         columnDefs:opts.columnDefs,
         order: opts.order,
         createdRow: function (row, data, dataIndex, cells) {
-            if(opts.rowClass==null)
-                $(row).addClass('tableRow');
-            else
-                $(row).addClass(opts.rowClass);
+            if(opts.OnCreatedRow != null)
+                opts.OnCreatedRow(row, data, dataIndex, cells);
+            else {
+                if (opts.rowClass == null)
+                    $(row).addClass('tableRow');
+                else
+                    $(row).addClass(opts.rowClass);
+            }
+
 
         },
         initComplete: function (settings, json) {

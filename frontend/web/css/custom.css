@@ -21,3 +21,7 @@
     position: absolute;
     background-color: lightblue;
 }
+
+.rowApproved{
+    background-color: #9fcdff;
+}

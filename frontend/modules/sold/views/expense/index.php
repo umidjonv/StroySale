@@ -55,9 +55,20 @@ $js = <<<JS
                 },
                 "sDefaultContent": '<a href="#" class="btn btn-default" name="deleteRecord"><span class="oi oi-x"></span></a>'
             },
+            {"data":'status'},
 
         ],
-        
+        OnCreatedRow:function(row, data, dataIndex, cells){
+             if (data.status == 0)
+                    $(row).addClass('tableRow');
+                else if(data.status==3)
+                    $(row).addClass('rowApproved');
+
+        },
+        RowClick:function()
+        {
+            $(this).
+        },
         columnDefs: [
             
             {
@@ -67,6 +78,11 @@ $js = <<<JS
             },
             {
                 "targets": [ 6 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 15 ],
                 "visible": false,
                 "searchable": false
             },
@@ -126,6 +142,7 @@ if($session->isActive)
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                       </thead>
                       
@@ -141,6 +158,7 @@ if($session->isActive)
                           <td></td>
                           <td></td>
                             <th></th>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

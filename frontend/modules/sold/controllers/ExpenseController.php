@@ -288,8 +288,8 @@ class ExpenseController extends BaseController
     public function actionRefreshd()
     {
 
-        $models = Expense::find()->where(['expType'=>0, 'status'=>0])->orderBy(['expenseId'=>SORT_DESC])->limit(1000)->all();
-        
+        $models = Expense::find()->andWhere(['expType'=>0])->andWhere(['or', ['status'=>1], ['status'=>3]])->orderBy(['expenseId'=>SORT_DESC])->limit(1000)->all();
+
         //return var_dump($models);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         //$this->redirect("site/login");
@@ -306,6 +306,7 @@ class ExpenseController extends BaseController
                 'comment',
                 'clientId',
                 'paidType',
+
                 'paidTypeName'=>function($data){
                     $str = 'Наличные';
                     switch($data->paidType)
@@ -348,6 +349,7 @@ class ExpenseController extends BaseController
                     }else
                     {return '';}
                 },
+                'status',
 
                 //'category'=>function($data){
                 //    return $data->category->name;
