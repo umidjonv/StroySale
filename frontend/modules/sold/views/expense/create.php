@@ -79,19 +79,21 @@ var expenseId = $('#formID').val().replace(' ', '');
                 }
             });
     $('#saveModalForm').on('click', function(){
+        
         var dataForm = $('#modalForm').serialize();
         $.ajax({                                                                                     
                 url: '/sold/orders/save',                                                      
                 type: 'POST',                                                                   
                 data:dataForm,                                                                                        
-                success: function(res){                                                         
+                success: function(res){
+        
                     $('#mainModal').modal('hide');   
                     $('#mainTable').DataTable().ajax.reload();
                     $('#tempName').val('');
                     $('#packCount').val('0');
                     $('#additionProd').prop("selectedIndex", 0);
                     $('#additionCnt').val('0');
-                    
+                    console.log(res);
                 },                                                                              
                 error: function(xhr){                                                           
                     console.log(xhr.responseText);                                              
@@ -265,7 +267,12 @@ $this->registerJs($js);
                                 </select>
                             </div>
                         </div>
-
+                        <div class="form-gr-oup row">
+                            <label for="staticId" class="col-sm-2 col-form-label">Номер договора</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="dogNum" value="<?=$model->dogNum ?>" placeholder="номер договора"/>
+                            </div>
+                        </div>
                         <div class="form-gr-oup row">
                             <label for="staticId" class="col-sm-2 col-form-label">Комментарий</label>
                             <div class="col-sm-6">

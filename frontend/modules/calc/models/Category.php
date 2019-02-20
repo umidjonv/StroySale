@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $categoryId
  * @property string $name
- *
+ * @property string $convertible
  * @property Product[] $products
  */
 class Category extends \yii\db\ActiveRecord
@@ -41,6 +41,7 @@ class Category extends \yii\db\ActiveRecord
         return [
             'categoryId' => 'Category ID',
             'name' => 'Name',
+            'convertible' => 'convertible',
         ];
     }
 

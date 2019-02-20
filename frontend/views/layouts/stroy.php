@@ -90,8 +90,12 @@ AppAsset::register($this);
 
                             <li class="nav-item"><div class="dropdown"><a href="#" role="button" class="nav-link  dropdown-toggle" id="dropdownExpense" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Отчеты</a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownExpense">
+                                        <a class="dropdown-item" href="/accounting/report/cash">Отчет по наличному</a>
+                                        <a class="dropdown-item" href="/accounting/report/transfer">Отчет по без наличному</a>
                                         <a class="dropdown-item" href="/reports/report/weekcountreport">Недельный отчет по приходу/уходу товаров</a>
-                                        <a class="dropdown-item" href="/reports/report/clientreport">Отчет по клиенту</a>
+                                        <a class="dropdown-item" href="/reports/report/clientreport">Отчет по клиенту (продажа, услуги)</a>
+                                        <a class="dropdown-item" href="/reports/report/clientinvocereport">Отчет по клиенту (приход товара)</a>
+
                                         
                                     </div>
                                 </div>
@@ -103,6 +107,32 @@ AppAsset::register($this);
                     </div>
                     <div class="collapse navbar-collapse" >
                         <ul class="navbar-nav ml-auto">
+                            <li class="nav-item nav">
+                                <select class="form-control" id="selectYearMain">
+                                    <?php
+
+                                    $yc = Yii::$app->session;
+                                    if(isset($yc['current_year']))
+                                    {
+                                        $yr = $yc['current_year'];
+                                    }else
+                                    {
+                                        $yr = date('Y');;
+                                    }
+
+
+                                        $year = date('Y');
+                                        for($y=2018;$y<=$year; $y++)
+                                        {
+                                            if($y == $yr)
+                                            {   echo '<option value="'.$y.'" selected>'.$y.'</option>';}
+                                            else
+                                            {   echo '<option value="'.$y.'">'.$y.'</option>';}
+                                        }
+
+                                    ?>
+                                </select>
+                            </li>
                             <li class="nav-item nav">
                                 <?php if (!Yii::$app->user->isGuest)
                                 {

@@ -64,7 +64,7 @@ $(document).on('click','#btnSaveCard', function(){
         $.ajax({
             url: url1,
             type: 'POST',
-            data: data+"&_csrf="+yii.getCsrfToken()+"&type=counting",
+            data: data+"&_csrf="+yii.getCsrfToken()+"&type=cash",
             success: function(res){       
                 $("#uslugiWindow").modal("hide");
                 console.log(res);
@@ -123,7 +123,7 @@ $this->registerJs($js);
     <div class="col-2">
 
         <? if(Yii::$app->controller->id =='expense'||  (Yii::$app->controller->id =='report'&&Yii::$app->controller->module->id =='accounting' )): ?>
-        <a href="javascript:;" class="btn btn-info" data-toggle="modal"  data-target="#uslugiWindow">добавить услугу</a>
+            <a href="javascript:;" class="btn btn-info" data-toggle="modal"  data-target="#uslugiWindow">добавить услугу</a>
         <? endif;?>
     </div>
 
@@ -132,19 +132,19 @@ $this->registerJs($js);
 <?php echo $content ?>
 
 
-    <div id="uslugiWindow" class="modal fade bd-example-modal-lg col-lg-12" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg col-lg-12">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Добавить приход/расход</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+<div id="uslugiWindow" class="modal fade bd-example-modal-lg col-lg-12" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg col-lg-12">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Добавить приход/расход</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-                <div class="modal-body">
-                    <div id="">
-                        <form action="" id="costForm"  method="POST" >
+            <div class="modal-body">
+                <div id="">
+                    <form action="" id="costForm"  method="POST" >
                         <div class="form-group row">
                             <div class="col-sm-5">
                                 <input type="number" class="form-control" placeholder="Номер накладной" name="expenseId" autocomplete="off">
@@ -203,11 +203,11 @@ $this->registerJs($js);
                             </div>
                         </div>
 
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 <?php $this->endContent(); ?>

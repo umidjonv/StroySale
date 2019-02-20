@@ -8,6 +8,7 @@
 namespace app\modules\reports\controllers;
 use app\components\BaseController;
 use app\models\Clients;
+use app\models\Product;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -194,6 +195,30 @@ class ReportController extends BaseController
 
 
     }
+    public function actionClientinvocereport()
+    {
+        $id = 0;
+        $productId = 0;
+        $dateFrom = date('Y-m-01');
+        $payType = '';
+        if(isset(Yii::$app->request->post()['clientId']))
+        {
+            $id = Yii::$app->request->post()['clientId'];
+            $productId = Yii::$app->request->post()['productId'];
+            $dateFrom = Yii::$app->request->post()['dateFrom'];
+            $payType = Yii::$app->request->post()['invoicePay'];
+
+        }
+
+        $query = $this->getClientinvoicereport($id, $dateFrom, $productId, $payType);
+
+        $clients = Clients::find()->all();
+        $products = Product::find()->all();
+
+        return $this->render('clientinvoicereport',['model'=> $query, 'clients'=>$clients, 'clientId'=>$id, 'curDate'=>$dateFrom, 'products'=>$products, 'productId'=>$productId, 'invoicePay'=> $payType]);
+
+
+    }
 
     public function actionClientreportxls($id = 0)
     {
@@ -261,9 +286,13 @@ class ReportController extends BaseController
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.($i+10), 'НВЛ');
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($i+10), $mod['clientName']);
             if($mod['typeS']=='продажа')
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($i+10), 'вывоз т.');
+            {$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($i+10), 'вывоз т.');}
             else
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($i+10), 'платят нам');
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($i+10), $mod['typeS']);
+            //else if($mod['typeS']=='услуга приход')
+            //{$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($i+10), 'платят нам'); }
+            //else
+            //{$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($i+10), 'платим мы');}
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue('K'.($i+10), $mod['description']);
             if($mod['typeS']=='продажа')
             {
@@ -345,6 +374,142 @@ class ReportController extends BaseController
 
     }
 
+    public function actionClientinvoicereportxls($id = 0)
+    {
+        //$id = 0;
+        $dateFrom = date('Y-m-01');
+        $productId = 0;
+        $payType = '';
+        if(isset(Yii::$app->request->post()['clientId']))
+        {
+            $id = Yii::$app->request->post()['clientId'];
+            $dateFrom = Yii::$app->request->post()['dateFrom'];
+            $productId = Yii::$app->request->post()['productId'];
+            $payType = Yii::$app->request->post()['invoicePay'];
+
+        }
+        $query = $this->getClientinvoicereport($id, $dateFrom, $productId, $payType);
+
+        $path = Yii::getAlias('@webroot/images/clientinvoicereport.xls');
+
+
+        $inputFileType = 'Excel5';
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($path);
+
+        /*
+        $styleArray = array(
+            'borders' => array(
+                'outline' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => array('argb' => '000000'),
+                ),
+            ),
+        );*/
+
+        $client = Clients::find()->where(['clientId'=>$id])->one();
+
+
+        $activeSheet = $objPHPExcel->setActiveSheetIndex(0);
+        // Add some data
+        $activeSheet->setCellValue('B2', $client->clientName);
+
+        //if(count($query)>1)
+        //    $objPHPExcel->getActiveSheet()->insertNewRowBefore(11, count($query)-1);
+        $i = 0;
+        $weeks = 'За недели [';
+        $first = true;
+        $sum = 0;
+        $expId = 0;
+
+
+        //if($i!=0)
+        foreach($query as $mod)
+        {
+            $i++;
+            $addition = " ";
+            if($first) {
+                $weeks = $weeks . date('W', strtotime($mod['deliveryDate'])) . '-';
+                $first = false;
+            }
+
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.($i+10), $mod['transportType']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.($i+10), $mod['expNum']);
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.($i+10), date('W', strtotime($mod['deliveryDate'])));
+            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.($i+10), 'НВЛ');
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.($i+10), $mod['clientName']);
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.($i+10), $mod['dogNum']);
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($i+10), $mod['productId']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($i+10), $mod['productName']);
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.($i+10), $mod['measureName']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('K'.($i+10), $mod['cnt']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M'.($i+10), $mod['exSumm']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('R'.($i+10), $mod['invoiceDate']);
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('S'.($i+10), $mod['driver']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('T'.($i+10), $mod['phone']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('U'.($i+10), $mod['carNumber']);
+
+            //->setCellValue('F'.($i+3), '')
+            //$objPHPExcel->setActiveSheetIndex(0)->getStyle('F'.($i+10))->applyFromArray($styleArray);
+
+            //$objPHPExcel->getActiveSheet()->duplicateStyle( $objPHPExcel->getActiveSheet()->getStyle('B8'), 'B'.($i+7).':G'.($i+7) );
+            //$objPHPExcel->setActiveSheetIndex(0)->getStyle('F'.($i+3))->applyFromArray($styleArray);
+
+        }
+        //$activeSheet->setCellValue('B4', $i);
+        $weeks =$weeks . ' сегодня]';
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('T2', $weeks);
+        //$val = $objPHPExcel->setActiveSheetIndex(0)->getCell('O3')->getValue();
+
+        if($sum<0)
+        {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('X2', "Сумма:".$sum);
+        }
+
+
+
+
+
+
+
+
+        // Rename worksheet
+        $objPHPExcel->getActiveSheet()->setTitle('Отчет по приходу клиента');
+
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel->setActiveSheetIndex(0);
+
+
+
+        // Redirect output to a client’s web browser (Excel2007)
+        //header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-type:application/vnd.ms-excel");
+        header('Content-Disposition: attachment;filename="отчет по приходу клиента.xls"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        ob_end_clean();
+        $objWriter->save('php://output');
+        spl_autoload_register(array('YiiBase','autoload'));
+        exit;
+
+    }
+
     private function getClientreport($id, $dateFrom)
     {
 
@@ -352,6 +517,75 @@ class ReportController extends BaseController
         $select = "select * from v_clientreport ".($id!=0?" where clientId = $id":""). ($id!=0?" and dateSum >= '$dateFrom 00:00:00' ":" where dateSum >= '$dateFrom 00:00:00' ") ." order by dateSum asc";
 
         $query = Yii::$app->db->createCommand($select)->queryAll();
+        return $query;
+    }
+
+    private function getClientinvoicereport($id, $dateFrom, $productId, $payType)
+    {
+        $query_str =  "select 
+                        i.invoiceId	, 
+                        i.deliveryDate, 
+                        i.transportType, 
+                        i.description	, 
+                        i.providerId	, 
+                        c.clientName 	,
+                        i.invoiceDate 	, 
+                        i.invoicePay    ,
+                        i.invoiceSumm 	,
+                        i.expNum 		,
+                        i.dogNum 		,
+                        p.measureId 	,
+                        m.name as measureName,
+                        i.deliveryDate ,
+                        i.driver			,
+                        i.phone			,
+                        i.carNumber		,
+                        ex.productId as productId, 
+                        p.name as productName,
+                        ex.cnt,
+                        ex.invoiceExSum as exSumm
+                        			 
+                        from invoice as i
+                        left join invoiceEx as ex on i.invoiceId = ex.invoiceId
+                        left join product as p on ex.productId = p.productId
+                        left join measure as m on p.measureId = m.measureId
+                        left join clients as c on i.providerId = c.clientId
+                        
+         ";
+        $where = " where ";
+
+        if($id!=0)
+        {
+            $where .= "c.clientId = $id". " and i.deliveryDate >= '$dateFrom 00:00:00' ";
+            if($productId!=0)
+            {
+                $where .= "and p.productId = $productId";
+            }
+
+
+        }else
+        {
+            if($productId!=0)
+            {
+                $where .= "i.deliveryDate >= '$dateFrom 00:00:00' and p.productId = $productId";
+
+
+            }
+            else
+            {
+                $where .= "i.deliveryDate >= '$dateFrom 00:00:00'";
+            }
+        }
+
+        if(isset($payType)&&$payType)
+        {
+            $where .= " and i.invoicePay='".$payType."' ";
+
+        }
+
+        // ($id!=0?" where clientId = $id":""). ($id!=0?" and invoiceDate >= '$dateFrom 00:00:00' ":" where invoiceDate >= '$dateFrom 00:00:00' ") .($id!=0? " and productId = $productId ": ($productId!=0?" where productId = $productId"));
+        $query_str = $query_str.' '.$where. ' order by i.deliveryDate desc ';
+        $query = Yii::$app->db->createCommand($query_str)->queryAll();
         return $query;
     }
     public function actionGetdate()

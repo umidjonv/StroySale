@@ -67,7 +67,7 @@ $("#mainTable").DataTable({
         },
 
          ajax: {
-             url: "/accounting/report/get-costs",
+             url: "/accounting/report/getcounting",
              dataSrc: 'datas',
              data: function() {
                return $("#mainForm1").serialize();

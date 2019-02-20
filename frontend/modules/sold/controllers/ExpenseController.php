@@ -114,6 +114,7 @@ class ExpenseController extends BaseController
             
             $form_model->expenseDate = $date->format('Y-m-d H:i:s');
             $form_model->debt = 0;
+            $form_model->dogNum = '';
             $form_model->comment = '';
             $form_model->clientId = null;//Yii::$app->request->post()['clientId'];
             $form_model->fakt = 0;
@@ -169,6 +170,7 @@ class ExpenseController extends BaseController
                 $form_model = Expense::find()->where(['expenseId' => $expId])->orderBy(['expenseId' => SORT_DESC])->one();
                 if ($form_model->load(Yii::$app->request->post(), '')) {
                     $form_model->paidType = Yii::$app->request->post()['paidType'];
+                    $form_model->dogNum = Yii::$app->request->post()['dogNum'];
                     $form_model->clientId = (Yii::$app->request->post()['clientId']!=0?Yii::$app->request->post()['clientId']:null);
                     $form_model->fromId = 1;
                     $expSum = 0;
@@ -224,8 +226,12 @@ class ExpenseController extends BaseController
     }
     public function actionRefreshdlist()
     {
+        $dt = Yii::$app->session;
+        if(isset($dt['current_year']))
+            $dt = $dt['current_year'];
+        else $dt = date('Y');
 
-        $models = Expense::find()->where(['expType'=>0, 'status'=>1])->orderBy(['expenseId'=>SORT_DESC])->limit(1000)->all();
+        $models = Expense::find()->andWhere(['and', "expenseDate>='$dt-01-01 00:00:00'", "expenseDate<='".($dt+1)."-01-01 00:00:00'"])->andWhere(['and', "expType=0", "status=1"])->orderBy(['expenseId'=>SORT_DESC])->limit(1000)->all();
 
         //return var_dump($models);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -237,6 +243,7 @@ class ExpenseController extends BaseController
                 'from'=>function($data){
                     return isset($data->from->kod)?$data->from->kod:"";
                 },
+                'dogNum',
                 'comment',
                 'clientId',
                 'paidType',
@@ -288,7 +295,12 @@ class ExpenseController extends BaseController
     public function actionRefreshd()
     {
 
-        $models = Expense::find()->andWhere(['expType'=>0])->andWhere(['or', ['status'=>1], ['status'=>3]])->orderBy(['expenseId'=>SORT_DESC])->limit(1000)->all();
+        $dt = Yii::$app->session;
+        if(isset($dt['current_year']))
+            $dt = $dt['current_year'];
+        else $dt = date('Y');
+
+        $models = Expense::find()->andWhere(['and', "expenseDate>='$dt-01-01 00:00:00'", "expenseDate<='".($dt+1)."-01-01 00:00:00'"])->andWhere(['expType'=>0])->andWhere(['or', ['status'=>0], ['status'=>3]])->orderBy(['expenseId'=>SORT_DESC])->limit(1000)->all();
 
         //return var_dump($models);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -303,6 +315,7 @@ class ExpenseController extends BaseController
                     else
                         return '';
                 },
+                'dogNum',
                 'comment',
                 'clientId',
                 'paidType',
@@ -515,6 +528,7 @@ class ExpenseController extends BaseController
             $form_model->expenseId = Yii::$app->request->post()['expenseId'];
             $form_model->expenseDate = Yii::$app->request->post()['expenseDate'];
             $form_model->debt = Yii::$app->request->post()['debt'];
+            $form_model->dogNum = Yii::$app->request->post()['dogNum'];
             $form_model->comment = Yii::$app->request->post()['comment'];
             $form_model->clientId = Yii::$app->request->post()['clientId'];
             $form_model->fakt = Yii::$app->request->post()['fakt'];
@@ -619,7 +633,7 @@ class ExpenseController extends BaseController
 
 
         $sql = "select e.expenseId, pr.name as Pname, o.addition,o.additionCnt, o.stuffProdId,p.name, round(((o.orderSumm)/o.faktCount), 2) as price, o.packCount, o.faktCount, o.idType, e.expenseDate, e.fromId,
-                    e.clientId, cl.clientName, e.paidType,o.orderSumm, e.expSum,
+                    e.clientId, cl.clientName,e.dogNum, e.paidType,o.orderSumm, e.expSum, 
                     d.deliveryType, d.driver, d.price as deliveryPrice, concat(d.address,' ',d.name,' ',d.description) as deliver 
                 from orders as o
                 LEFT OUTER JOIN (select * from (select productId as pId, name,(select 0) as idType, price from product
@@ -794,6 +808,29 @@ class ExpenseController extends BaseController
 
 
 
+    }
+
+    public function actionApproved()
+    {
+        if(isset(Yii::$app->request->post()['id'])) {
+            $id =Yii::$app->request->post()['id'];
+            $exp = Expense::find()->where(['expenseId' => $id])->one();
+            $exp->status = 3;
+            $exp->save(false);
+            echo 'ok';
+        }else
+            throw new \Exception('please set id to request');
+    }
+    public function actionRejected()
+    {
+        if(isset(Yii::$app->request->post()['id'])) {
+            $id =Yii::$app->request->post()['id'];
+            $exp = Expense::find()->where(['expenseId' => $id])->one();
+            $exp->status = 0;
+            $exp->save(false);
+            echo 'ok';
+        }else
+            throw new \Exception('please set id to request');
     }
 
 

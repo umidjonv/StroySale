@@ -27,6 +27,9 @@ class Product extends \yii\db\ActiveRecord
         return 'product';
     }
 
+    public $convertibles = array();
+
+
     /**
      * @inheritdoc
      */
@@ -92,4 +95,26 @@ class Product extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Struct::className(), ['stuffProdId' => 'stuffId']);
     }
+
+    public function converting()
+    {
+        $cat = Category::find()->where(['categoryId'=>$this->categoryId])->one();
+
+        if(isset($cat->convertible)) {
+            $convertibles = explode(';', $cat->convertible);
+
+            foreach ($this->convertibles as $conv)
+            {
+                foreach ($convertibles  as $dbconv)
+                {
+                    if($conv == $dbconv)
+
+                        return $conv;
+                }
+            }
+        }
+        return null;
+    }
+
+
 }

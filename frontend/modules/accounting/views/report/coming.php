@@ -13,7 +13,8 @@ $("#mainTable").DataTable({
             {"data":'comment'},
             {"data":'expenseId'},
             {"data":'clientName'},
-            {"data":'summ'}
+            {"data":'summ'},
+            {"data":'identity'}
         ],
 
         language: {
@@ -115,6 +116,7 @@ $this->registerJs($js);
             <th scope="col">№ накладной</th>
             <th scope="col">Клиент</th>
             <th scope="col">Сумма</th>
+            <th scope="col">Идентификация</th>
         </tr>
         </thead>
     </table>

@@ -9,6 +9,7 @@ $js = <<<JS
             {"data":'clientId'},
             {"data":'clientName'},
             {"data":'from'},
+            {"data":'dogNum'},
             {"data":'comment'},
             {"data":'paidType'},
             {"data":'paidTypeName'},
@@ -81,7 +82,7 @@ $js = <<<JS
                 "searchable": false
             },
             {
-                "targets": [ 6 ],
+                "targets": [ 7 ],
                 "visible": false,
                 "searchable": false
             },
@@ -128,6 +129,7 @@ if($session->isActive)
                           <th scope="col">КлиентИД</th>
                             <th scope="col">Клиент</th>
                             <th scope="col">ОТ</th>
+                            <th scope="col">№ дог.</th>
                             <th scope="col">Примечание</th>
                             <th scope="col">Тип оплаты</th>
                             <th scope="col">Оплата</th>
@@ -147,6 +149,7 @@ if($session->isActive)
                       
                         <tr class="tableRow">
                           <td scope="row"></td>
+                          <td></td>
                           <td></td>
                           <td></td>
                           <td></td>

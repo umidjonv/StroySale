@@ -45,6 +45,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'reports/report/clientinvoicereportxls/<id:\d+>' => 'reports/report/clientinvoicereportxls',
                 'reports/report/clientreportxls/<id:\d+>' => 'reports/report/clientreportxls',
                 'sold/expense/solded/<id:\d+>' => 'sold/expense/solded',
                 'sold/expense/existsold/<id:\d+>' => 'sold/expense/existsold',

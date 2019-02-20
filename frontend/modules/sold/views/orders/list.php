@@ -56,7 +56,7 @@ $js = <<<JS
                     i++;
                 });
                 summ = $('#orderSumm').val();
-                kol = $('#fakt').val();
+                kol = $('#packCount').val();
                 $('#cena').text(Math.round(summ/kol*100)/100);
                 $('#newCena').val(Math.round(summ/kol*100)/100);
                 

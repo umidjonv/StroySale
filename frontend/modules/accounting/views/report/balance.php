@@ -1,6 +1,6 @@
 <? $balance = new \app\modules\accounting\models\Balancesum();
 $js = <<<JS
-
+    var accid = 0;
     $('#mainForm1').on('submit', function(){
         var url1 = "/accounting/report/get-balance";
         var data = $(this).serialize();
@@ -11,17 +11,19 @@ $js = <<<JS
             success: function(res){
                 var text = "";
                 $.each(res.datas, function(key,index) {
-                  text += "<tr class='tableRow'>" +
+                  text += "<tr class='tableRow' id='"+index.accountId+"'>" +
                         "<td>" + index.accountDate + "</td>" +
                         "<td>" + index.comment + "</td>" +
                         "<td>" + index.expenseId + "</td>" +
                         "<td>" + index.clientName + "</td>" +
                         "<td>" + index.summ + "</td>" +
                         "<td>" + ((index.accountType == 1) ? "Приход" : "Расход") + "</td>" +
+                        "<td>" + index.identity + "</td>" +
+                        "<td><a href='javascript:;' class='btn accountdelete' ><span class='oi oi-x'></span></a></td>" +
                     "</tr>";
                 });
                 text += "<tr>"+
-                        "<td colspan='2'>Остаток</td>"+
+                        "<td colspan='4'>Остаток</td>"+
                         "<td colspan='2'>"+res.balance+"</td>"+
                     "</tr>";
                 console.log(text);
@@ -34,10 +36,55 @@ $js = <<<JS
         
         return false; 
     });    
+    var deleteAcc = function() {
+      $(this).dialog("close");
+    };
+    
+    $.ConfirmDialog =  function (message, yesFunction){
+    $('<div></div>').appendTo('body')
+                    .html('<div><h6>'+message+'?</h6></div>')
+                    .dialog({
+
+                        modal: true, title: 'Сообщение', zIndex: 10000, autoOpen: true,
+                        width: '250px', resizable: false,
+                        buttons: {
+                            ДА: yesFunction,
+                            Нет: function () {  
+                                //$('body').append('<h1>Confirm Dialog Result: <i>No</i></h1>');
+                            
+                                $(this).dialog("close");
+                            }
+                        },
+                        close: function (event, ui) {
+                            $(this).remove();
+                        }
+                    });
+    };    
     
     $('#mainForm1').submit();
-
+    $(document).on("click", ".accountdelete", function(){
+        accid = $(this).parent().parent().attr("id");
+        deleteAcc = function () {
+            $.ajax({
+                url: "delete",
+                type: 'POST',
+                data: "id="+accid,
+                success: function(res){
+                    $("#"+accid).remove();     
+                },            
+                error: function(xhr){
+                    console.log(xhr.responseText);
+                }
+            });
+            $(this).dialog("close");
+        };  
+        $.ConfirmDialog('Удалить запись', deleteAcc);
+            
+    });       
+    
+     function deleteAcc() {
         
+    };
 JS;
 
 $this->registerJs($js);
@@ -76,6 +123,8 @@ $this->registerJs($js);
             <th scope="col">Клиент</th>
             <th scope="col">Сумма</th>
             <th scope="col">Приход/Расход</th>
+            <th scope="col">Идентификация</th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <?php if(isset($models)):?>
@@ -88,6 +137,7 @@ $this->registerJs($js);
                     <td><?= $model["clientName"] ?></td>
                     <td><?= $model["summ"] ?></td>
                     <td><?= ($model["accountType"] == 1) ? "Приход" : "Расход" ?></td>
+                    <td><?= $model["identity"] ?></td>
                 </tr>
 
             <?php $date = $model["accountDate"]; } ?>

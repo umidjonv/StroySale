@@ -38,7 +38,8 @@ class Account extends \yii\db\ActiveRecord
             [['accountDate', 'summ', 'accountType'], 'required'],
             [['accountDate','serviceDate'], 'safe'],
             [['summ','cnt','byone'], 'number'],
-            [['comment'], 'string', 'max' => 255],
+            [['comment','accountPay'], 'string', 'max' => 255],
+            [['identity','connect'], 'string', 'max' => 100],
             //[['expenseId'], 'exist', 'skipOnError' => true, 'targetClass' => Expense::className(), 'targetAttribute' => ['expenseId' => 'expenseId']],
         ];
     }

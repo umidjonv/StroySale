@@ -11,6 +11,7 @@ $js = <<<JS
             {"data":'description'},
             {"data": 'clientName'},
             {"data":'expNum'},
+            {"data":'dogNum'},
             {"data":'name'},
             {"data":'cnt'},
             {"data":'mName'},
@@ -19,6 +20,7 @@ $js = <<<JS
             {"data":'phone'},
             {"data":'carNumber'},
             {"data":'invoiceSumm'},
+            {"data":'byOne'},
             
             /*{
                 "mDataProp": function (source, type, val) {
@@ -82,7 +84,8 @@ $js = <<<JS
     tableId:"#invoiceTable",
     refreshUrl:"/invoice/refreshd",
     deleteUrl:"/invoice/delete",    
-    newUrl:"/invoice/new"
+    newUrl:"/invoice/new",
+    order: [[ 1, "desc" ]]
 
 });
 
@@ -192,6 +195,7 @@ $('#cardForm').on('submit', function(){
                     $("#cardForm")[0].reset();
                     $("#alertBox").remove();
                 }
+                console.log(res);
             },
             error: function(xhr){
                 console.log(xhr.responseText);
@@ -329,7 +333,7 @@ $this->registerJs($js);
                         </div>
 
                           <div class="col-sm-3">
-                              <input type="number" step="any" class="form-control" placeholder="Кол-во" id="cnt" name="cnt">
+                              <input type="number" step="any" class="form-control" placeholder="Кол-во в тоннах" id="cnt" name="cnt">
                           </div>
                           <div class="col-sm-2">
                               <input type="number" step="any" class="form-control" placeholder="Сумма одной" id="sum" name="sum">
@@ -342,11 +346,15 @@ $this->registerJs($js);
                           <input type="text" class="form-control" name="description" id="inputDescription" placeholder="описание">
                         </div>
 
-                          <label for="expNum" class="col-sm-3 col-form-label">№ накладной</label>
-                          <div class="col-sm-2">
+                          <label for="expNum" class="col-sm-1 col-form-label">№ накладной</label>
+                          <div class="col-sm-1">
                               <input type="text" class="form-control" name="expNum" id="expNum" placeholder="№">
                           </div>
 
+                          <label for="dogNum" class="col-sm-1 col-form-label">№ договора</label>
+                          <div class="col-sm-1">
+                              <input type="text" class="form-control" name="dogNum" id="expNum" placeholder="№">
+                          </div>
                       </div>
 
                         <div class="form-group row">
@@ -407,6 +415,7 @@ $this->registerJs($js);
                           <th scope="col">Описание</th>
                           <th scope="col">Поставщик</th>
                             <th scope="col">№ накладной</th>
+                            <th scope="col">№ договора</th>
                           <th scope="col">Наименование продукта</th>
                           <th scope="col">Кол-во</th>
                             <th scope="col">Ед.изм.</th>
@@ -415,6 +424,7 @@ $this->registerJs($js);
                             <th scope="col">Номер</th>
                             <th scope="col">Номер машины</th>
                             <th scope="col">Сумма</th>
+                            <th scope="col">Сумма за ед.</th>
                           <th></th>
                         </tr>
                       </thead>

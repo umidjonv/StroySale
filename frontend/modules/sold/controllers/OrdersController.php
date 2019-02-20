@@ -166,13 +166,14 @@ class OrdersController extends BaseController
 
             $cena = $mainForm['newCena'];
             $fakt = $mainForm['fakt'];
+            $pack = $mainForm['packCount'];
             //$expSum = $mainForm['expSum'];
 
             $ostatok = 0;
             if ($model->faktCount != $fakt)
                 $ostatok = $model->faktCount - $fakt;
 
-            $model->orderSumm = $cena * $fakt;
+            $model->orderSumm = $cena * $pack;
 
             $model->faktCount = $fakt;
             if ($model->validate()) {

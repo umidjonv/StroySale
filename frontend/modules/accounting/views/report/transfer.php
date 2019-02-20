@@ -67,7 +67,7 @@ $("#mainTable").DataTable({
         },
 
          ajax: {
-             url: "/accounting/report/get-costs",
+             url: "/accounting/report/gettransfer",
              dataSrc: 'datas',
              data: function() {
                return $("#mainForm1").serialize();
@@ -106,7 +106,7 @@ JS;
 $this->registerJs($js);
 ?>
 
-<h3>Расход по дате</h3>
+<h3>Перечисление</h3>
 <div class="row">
     <div class="col">
         <form class="mainForm" id="mainForm1" action="/category/save" method="POST">

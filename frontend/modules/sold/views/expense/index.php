@@ -9,6 +9,7 @@ $js = <<<JS
             {"data":'clientId'},
             {"data":'clientName'},
             {"data":'from'},
+            {"data":'dogNum'},
             {"data":'comment'},
             {"data":'paidType'},
             {"data":'paidTypeName'},
@@ -55,6 +56,19 @@ $js = <<<JS
                 },
                 "sDefaultContent": '<a href="#" class="btn btn-default" name="deleteRecord"><span class="oi oi-x"></span></a>'
             },
+            {
+                "mDataProp": function (source, type, val) {
+                    if (type === 'set') {
+
+                        return;
+                    }
+                    else if (type === 'display') {
+                        return '<input type="checkbox" name="checkRecord" '+(source.status==3?'checked="checked"':'')+' id="checkRecord'+source.expenseId+'" />';
+                    }
+
+                },
+                "sDefaultContent": '<input type="checkbox" id="checkRecordss" />'
+            },
             {"data":'status'},
 
         ],
@@ -65,9 +79,42 @@ $js = <<<JS
                     $(row).addClass('rowApproved');
 
         },
-        RowClick:function()
+        RowClick:function(elem)
         {
-            $(this).
+            $('[name="checkRecord"]').on('click', function(){
+                var url = '/sold/expense/approved';
+            if(!this.checked)
+            {
+                url = '/sold/expense/rejected';
+            }
+            var elem = this;
+            eId = $(this).attr('id');
+            eId= eId.replace('checkRecord', '');
+            
+                $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data:{'id':eId},
+                        success: function(res){
+                            var tableRow = $("td").filter(function() {
+                                return $(this).text() == eId;
+                            }).closest("tr");
+                            if(elem.checked)
+                            $(tableRow).addClass('rowApproved');
+                            else
+                                $(tableRow).removeClass('rowApproved');
+                                
+                            //$('#mainTable').DataTable().ajax.reload();
+                            console.log(res+ " record approved");
+                            //$.emptyValues();
+                        },
+                        error: function(xhr){
+                            console.log(xhr.responseText);
+                        }
+                        });
+         }); 
+            
+            //$(elem).children("td").map(function() {
         },
         columnDefs: [
             
@@ -82,7 +129,7 @@ $js = <<<JS
                 "searchable": false
             },
             {
-                "targets": [ 15 ],
+                "targets": [ 16 ],
                 "visible": false,
                 "searchable": false
             },
@@ -98,6 +145,9 @@ $js = <<<JS
 
 });
 
+ 
+        
+ 
  
 JS;
 $this->registerJs($js);
@@ -132,6 +182,7 @@ if($session->isActive)
                           <th scope="col">КлиентИД</th>
                             <th scope="col">Клиент</th>
                             <th scope="col">ОТ</th>
+                            <th scope="col">№ дог.</th>
                             <th scope="col">Примечание</th>
                             <th scope="col">Тип оплаты</th>
                             <th scope="col">Оплата</th>
@@ -142,6 +193,7 @@ if($session->isActive)
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th>Проведено</th>
                             <th></th>
                         </tr>
                       </thead>
@@ -157,7 +209,9 @@ if($session->isActive)
                           <td></td>
                           <td></td>
                           <td></td>
+                          <td></td>
                             <th></th>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

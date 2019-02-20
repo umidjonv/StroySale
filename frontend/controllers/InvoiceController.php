@@ -38,6 +38,8 @@ class InvoiceController extends components\BaseController
     
     public function actionNew()
     {
+        $convM = new components\ConvertingMeasure();
+
         $isAjax = false;
         $form_model =  new \app\models\Invoice();
         if(\Yii::$app->request->isAjax){
@@ -59,13 +61,18 @@ class InvoiceController extends components\BaseController
             $form_model->carNumber = Yii::$app->request->post()['carNumber'];
             $form_model->invoiceSumm = Yii::$app->request->post()['invoiceSum'];
             $form_model->expNum = Yii::$app->request->post()['expNum'];
+            $form_model->dogNum = Yii::$app->request->post()['dogNum'];
             if($form_model->validate()){
                 $form_model->save();
                 $account = new Account();
                 $account->addClientSum(Yii::$app->request->post()['clientId'],Yii::$app->request->post()['invoiceSum']*(-1));
                 $model = new InvoiceEx();
                 $model->invoiceId = $form_model->invoiceId;
-                $model->cnt = Yii::$app->request->post()['cnt'];
+                $idP = Yii::$app->request->post()['stuffProdId'];
+                $valP = Yii::$app->request->post()['cnt'];
+                $pd = new Product();
+                $pd = Product::find()->where(['productId'=>$idP])->one();
+                $model->cnt = $convM->Measure_convert($pd, 'KG', $valP);
                 $model->productId = Yii::$app->request->post()['stuffProdId'];
                 $model->invoiceExSum = Yii::$app->request->post()['cnt']*Yii::$app->request->post()['sum'];
                 $model->save();
@@ -85,7 +92,15 @@ class InvoiceController extends components\BaseController
         //var_dump($form_model);
         return $this->render('index', ['model'=> $form_model]);
     }
-    
+
+    public function actionTesting()
+    {
+        $convM = new components\ConvertingMeasure();
+        $cnt = $convM->Measure_convert(10, 'KG', 20);
+        return $this->render('test', ['conv' => $cnt]);
+
+    }
+
     public function actionDelete()
     {
         $id = Yii::$app->request->post()['id'];
@@ -113,7 +128,7 @@ class InvoiceController extends components\BaseController
     {
         try{
 
-            $model = Yii::$app->db->createCommand("select m.name as mName,i.expNum,i.deliveryDate,i.carNumber, ie.cnt,ie.invoiceId, ie.productId, i.description,i.invoiceDate,i.transportType, p.name,cl.clientName,i.invoiceSumm,i.driver,i.phone from invoiceEx ie
+            $model = Yii::$app->db->createCommand("select round(ie.invoiceExSum/ie.cnt,2) as byOne, i.dogNum, m.name as mName,i.expNum,i.deliveryDate,i.carNumber, ie.cnt,ie.invoiceId, ie.productId, i.description,i.invoiceDate,i.transportType, p.name,cl.clientName,i.invoiceSumm,i.driver,i.phone from invoiceEx ie
 INNER JOIN invoice i on i.invoiceId = ie.invoiceId
 INNER JOIN product p on p.productId = ie.productId
 INNER JOIN measure m on p.measureId = m.measureId

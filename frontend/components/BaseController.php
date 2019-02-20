@@ -64,4 +64,33 @@ class BaseController extends Controller
         }
     }
 
+    public function actionGetyear()
+    {
+        $session = Yii::$app->session;
+
+        if($session->has('current_year')&&isset($session['current_year']))
+        {
+            return $session['current_year'];
+        }else {
+            $session['current_year'] = date("Y");
+            return $session['current_year'];
+        }
+
+    }
+    public function actionSetyear()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(Yii::$app->request->post()['current_year'])
+        {
+            $curYear = Yii::$app->request->post()['current_year'];
+            $session = Yii::$app->session;
+            $session['current_year']  = $curYear;
+
+            return 'year saved';
+
+        }
+    }
+
+
+
 }

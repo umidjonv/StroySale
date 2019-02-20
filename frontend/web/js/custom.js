@@ -318,6 +318,23 @@ function SendRequest() {
     });
 //    });
 }
+
+
+$('#selectYearMain').on('change', function(){
+    cyear = $(this).val();
+    $.ajax({
+        url: '/sold/expense/setyear',
+        type: 'POST',
+        data:{'current_year':cyear},
+        success: function(res){
+            location.reload();
+        },
+        error: function(xhr){
+            console.log(xhr.responseText);
+        }
+
+    });
+});
 $(Start);
 
 

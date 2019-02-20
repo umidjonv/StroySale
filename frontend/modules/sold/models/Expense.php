@@ -23,6 +23,7 @@ use Yii;
  * @property int $paidType
  * @property int $charge
  * @property int $fromId
+ * @property string $dogNum
  */
 class Expense extends \yii\db\ActiveRecord
 {
@@ -56,6 +57,7 @@ class Expense extends \yii\db\ActiveRecord
             'expenseId' => 'Номер накладной',
             'expenseDate' => 'Дата',
             'debt' => 'Долг',
+            'dogNum' => 'Номер договора',
             'comment' => 'Комментарий',
             'clientId' => 'Клиент',
             'fakt' => 'Факт',
@@ -69,6 +71,7 @@ class Expense extends \yii\db\ActiveRecord
             'paidType' => 'Тип оплаты',
             'charge' => 'Наценка',
             'from' => 'От имени',
+
         ];
     }
     

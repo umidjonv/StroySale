@@ -166,6 +166,7 @@ $driver = $sess['driver'];
             <th scope="col"># продажи</th>
             <th scope="col">Дата</th>
             <th scope="col">Клиент</th>
+            <th scope="col">№ дог.</th>
             <th scope="col">Наименование</th>
             <th scope="col">Количество</th>
             <th scope="col">По факту</th>
@@ -184,6 +185,7 @@ $driver = $sess['driver'];
             <td><?=$one['expenseId']?></td>
             <td><?=$one['expenseDate']?></td>
             <td><?=$one['clientName']?></td>
+            <td><?=$one['dogNum']?></td>
             <td><?=$one['name']?><?=($one["addition"] != 0) ? " с ".$one["Pname"]."-".$one["additionCnt"] : ""?></td>
             <td><?=$one['packCount']?></td>
             <td><?=$one['faktCount']?></td>

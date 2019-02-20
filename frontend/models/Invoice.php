@@ -39,7 +39,8 @@ class Invoice extends \yii\db\ActiveRecord
             [['deliveryDate'], 'required', 'message' => 'Дата поставки объязательно к заполнению'],
             [['invoiceDate', 'deliveryDate'], 'safe'],
             [['providerId'], 'integer'],
-            [['expNum'], 'string', 'max' => 100],
+            [['expNum'], 'string', 'max' => 11],
+            [['dogNum'], 'string', 'max' => 11],
             [['invoiceSumm'], 'number'],
             [['transportType'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 255],
@@ -67,6 +68,7 @@ class Invoice extends \yii\db\ActiveRecord
             'phone' => 'Phone',
             'carNumber' => 'Car number',
             'expNum' => 'Expense number',
+            'dogNum' => 'Dogovor number',
         ];
     }
 
